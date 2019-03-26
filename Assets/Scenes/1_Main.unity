@@ -2204,7 +2204,12 @@ Prefab:
     - target: {fileID: 114108875303806654, guid: 94203d513d5e14a4fb33ba3a9d40546f,
         type: 2}
       propertyPath: forceScaler
-      value: 100
+      value: 1000
+      objectReference: {fileID: 0}
+    - target: {fileID: 54260810982880258, guid: 94203d513d5e14a4fb33ba3a9d40546f,
+        type: 2}
+      propertyPath: m_IsKinematic
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 94203d513d5e14a4fb33ba3a9d40546f, type: 2}

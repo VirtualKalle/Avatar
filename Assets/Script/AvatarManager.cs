@@ -45,8 +45,8 @@ public class AvatarManager : MonoBehaviour {
 
     void FollowTransform()
     {
-        //headAvatar.localPosition = head.position;
-        //headAvatar.localRotation = head.localRotation;
+        //headAvatar.localPosition = head.localPosition;
+        headAvatar.localRotation = head.localRotation;
 
         //bodyAvatar.localPosition = headAvatar.localPosition + new Vector3(0,-1f,0);
 
@@ -54,8 +54,8 @@ public class AvatarManager : MonoBehaviour {
         handRightAvatar.localPosition = handRight.localPosition + headAvatar.localPosition;
         handRightAvatar.localRotation = handRight.localRotation;
 
-        handLeftAvatar.localPosition = handLeft.position - head.position + headAvatar.localPosition;
-        handLeftAvatar.localRotation = handLeft.rotation;
+        handLeftAvatar.localPosition = handLeft.localPosition + headAvatar.localPosition;
+        handLeftAvatar.localRotation = handLeft.localRotation;
     }
 
 }
