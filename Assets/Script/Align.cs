@@ -7,19 +7,20 @@ public class Align : MonoBehaviour
 {
 
     [SerializeField] Rigidbody go;
-    public Vector3 torque;
     public Vector3 force;
 
-    [SerializeField] string torqueStr;
-    [SerializeField] Text textComponent1;
-    [SerializeField] Text textComponent2;
     [SerializeField] float forceScaler;
     [SerializeField] float torqueScaler;
 
-    Vector3 x;
-    float theta;
-    Vector3 w;
-    Quaternion q;
+    private float limitAngle = 80;
+
+    private float UpAngleDiff;
+    private float UpAngleLimitScaler;
+    private float RightAngleDiff;
+    private float RightAngleLimitScaler;
+    private float ForwardAngleDiff;
+    private float ForwardAngleLimitScaler;
+    private float theta;
 
     // Use this for initialization
     void Start()
@@ -32,6 +33,7 @@ public class Align : MonoBehaviour
         Force();
         TorqueUp();
         TorqueRight();
+        TorqueForward();
         GravityTorque();
     }
 
@@ -47,15 +49,52 @@ public class Align : MonoBehaviour
         go.AddTorque(-((go.position - go.worldCenterOfMass).magnitude * go.mass * 9.82f * g));
     }
 
-    void TorqueUp()
-    { 
-        x = Vector3.Cross(go.transform.up.normalized, transform.up.normalized);
-        theta = Mathf.Asin(x.magnitude);
-        //w = x.normalized * theta / Time.fixedDeltaTime;
-        w = x.normalized * theta;
+    void TorqueForward()
+    {
+        Vector3 x = Vector3.Cross(go.transform.forward.normalized, transform.forward.normalized);
+        float theta = Mathf.Asin(x.magnitude);
+        Vector3 w = x.normalized * theta;
 
         Quaternion q = go.transform.rotation * go.inertiaTensorRotation;
-        torque = q * Vector3.Scale(go.inertiaTensor, (Quaternion.Inverse(q) * w)) * torqueScaler;
+
+        //ForwardAngleDiff = Vector3.Angle(go.transform.forward, transform.forward);
+
+        //if (ForwardAngleDiff >= limitAngle + 1)
+        //{
+        //    ForwardAngleLimitScaler = (ForwardAngleDiff - limitAngle);
+        //}
+        //else
+        //{
+        //    ForwardAngleLimitScaler = 1;
+        //}
+
+        Vector3 torque = q * Vector3.Scale(go.inertiaTensor, (Quaternion.Inverse(q) * w)) * torqueScaler /** ForwardAngleLimitScaler*/;
+
+        go.AddTorque(torque, ForceMode.Impulse);
+
+    }
+
+    void TorqueUp()
+    {
+        Vector3 x = Vector3.Cross(go.transform.up.normalized, transform.up.normalized);
+        float theta = Mathf.Asin(x.magnitude);
+        Vector3 w = x.normalized * theta;
+
+        Quaternion q = go.transform.rotation * go.inertiaTensorRotation;
+
+        //UpAngleDiff = Vector3.Angle(go.transform.up, transform.up);
+
+
+        //if (UpAngleDiff >= limitAngle + 1)
+        //{
+        //    UpAngleLimitScaler = (UpAngleDiff - limitAngle);
+        //}
+        //else
+        //{
+        //    UpAngleLimitScaler = 1;
+        //}
+
+        Vector3 torque = q * Vector3.Scale(go.inertiaTensor, (Quaternion.Inverse(q) * w)) * torqueScaler /** UpAngleLimitScaler*/;
 
         go.AddTorque(torque, ForceMode.Impulse);
 
@@ -63,13 +102,24 @@ public class Align : MonoBehaviour
 
     void TorqueRight()
     {
-        x = Vector3.Cross(go.transform.right.normalized, transform.right.normalized);
-        theta = Mathf.Asin(x.magnitude);
-        //w = x.normalized * theta / Time.fixedDeltaTime;
-        w = x.normalized * theta;
+        Vector3 x = Vector3.Cross(go.transform.right.normalized, transform.right.normalized);
+        float theta = Mathf.Asin(x.magnitude);
+        Vector3 w = x.normalized * theta;
 
         Quaternion q = go.transform.rotation * go.inertiaTensorRotation;
-        torque = q * Vector3.Scale(go.inertiaTensor, (Quaternion.Inverse(q) * w)) * torqueScaler;
+
+        //RightAngleDiff = Vector3.Angle(go.transform.right, transform.right);
+        
+        //if (RightAngleDiff >= limitAngle + 1)
+        //{
+        //    RightAngleLimitScaler = (RightAngleDiff - limitAngle);
+        //}
+        //else
+        //{
+        //    RightAngleLimitScaler = 1;
+        //}
+
+        Vector3 torque = q * Vector3.Scale(go.inertiaTensor, (Quaternion.Inverse(q) * w)) * torqueScaler /** RightAngleLimitScaler*/;
 
         go.AddTorque(torque, ForceMode.Impulse);
 
