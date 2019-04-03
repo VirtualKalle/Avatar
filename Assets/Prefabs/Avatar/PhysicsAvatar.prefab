@@ -515,3 +515,4 @@ MonoBehaviour:
   handRight: {fileID: 0}
   handLeft: {fileID: 0}
   head: {fileID: 0}
+  forceScaler: 0

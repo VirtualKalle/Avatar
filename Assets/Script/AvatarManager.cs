@@ -50,13 +50,13 @@ public class AvatarManager : MonoBehaviour {
         //headAvatar.localPosition = head.localPosition;
         headAvatar.localRotation = head.localRotation;
 
-        //bodyAvatar.localPosition = headAvatar.localPosition + new Vector3(0,-1f,0);
+        bodyAvatar.localPosition = headAvatar.localPosition + new Vector3(0, -1f, 0);
 
         //handRightAvatar.localPosition = handRight.position - head.position + headAvatar.localPosition;
-        handRightAvatar.localPosition = handRight.localPosition + headAvatar.localPosition;
+        handRightAvatar.position = headAvatar.TransformPoint(head.transform.InverseTransformPoint(handRight.position));
         handRightAvatar.localRotation = handRight.localRotation;
 
-        handLeftAvatar.localPosition = handLeft.localPosition + headAvatar.localPosition;
+        handLeftAvatar.position = headAvatar.TransformPoint(head.transform.InverseTransformPoint(handLeft.position));
         handLeftAvatar.localRotation = handLeft.localRotation;
     }
 
