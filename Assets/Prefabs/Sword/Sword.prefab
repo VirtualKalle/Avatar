@@ -562,11 +562,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   go: {fileID: 54248578519585064}
-  torque: {x: 0, y: 0, z: 0}
   force: {x: 0, y: 0, z: 0}
-  torqueStr: 
-  textComponent1: {fileID: 0}
-  textComponent2: {fileID: 0}
   forceScaler: 20
   torqueScaler: 2
 --- !u!114 &114546687689880202
