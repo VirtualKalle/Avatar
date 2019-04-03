@@ -83,7 +83,7 @@ public class GunManager : MonoBehaviour
     void Update()
     {
 
-        if (!item.isMoving && !item.holstered)
+        if (item.m_itemState == ItemState.unholstered)
         {
         //CheckGrab();
         OnTriggerShoot();

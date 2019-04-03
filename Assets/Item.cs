@@ -2,46 +2,36 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+    public enum ItemState { holstered, unholstered, holstering, unholstering}
+
 public class Item : MonoBehaviour
 {
-
-    public bool holstered = false;
+    
     Coroutine HolsterCo;
     [SerializeField] Transform holsterParent;
     [SerializeField] Transform hand;
-    public bool isMoving;
     [SerializeField] public Hand m_hand;
-
+    public ItemState m_itemState;
 
 
 
     public void Holster()
     {
-        if (!holstered)
-        {
-            Debug.Log("Holster");
-            //StopCoroutine(HolsterCo);
-
-            if (!isMoving)
+            if (m_itemState == ItemState.unholstered)
             {
+                m_itemState = ItemState.holstering;
                 HolsterCo = StartCoroutine(MoveToPosition(holsterParent));
-                holstered = true;
             }
-        }
     }
 
 
     public void Unholster()
     {
-        if (holstered)
+        if (m_itemState == ItemState.holstered)
         {
             Debug.Log("Unholster");
-            //StopCoroutine(HolsterCo);
-            if (!isMoving)
-            {
-                HolsterCo = StartCoroutine(MoveToPosition(hand));
-                holstered = false;
-            }
+            m_itemState = ItemState.unholstering;
+            HolsterCo = StartCoroutine(MoveToPosition(hand));
         }
     }
 
@@ -49,7 +39,6 @@ public class Item : MonoBehaviour
     {
         Vector3 distance = (target.position - transform.position);
         transform.parent = null;
-        isMoving = true;
 
         while ((target.position - transform.position).magnitude > 0.1)
         {
@@ -70,7 +59,15 @@ public class Item : MonoBehaviour
         transform.position = target.position;
         transform.parent = target;
         transform.localRotation = Quaternion.Euler(Vector3.zero);
-        isMoving = false;
+
+        if (m_itemState == ItemState.holstering)
+        {
+            m_itemState = ItemState.holstered;
+        }
+        else if (m_itemState == ItemState.unholstering)
+        {
+            m_itemState = ItemState.unholstered;
+        }
 
     }
 
