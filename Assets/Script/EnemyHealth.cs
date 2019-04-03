@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using UnityEngine.AI;
+using UnityEngine.UI;
 
 public class EnemyHealth : MonoBehaviour
 {
@@ -8,18 +9,18 @@ public class EnemyHealth : MonoBehaviour
     public float sinkSpeed = 2.5f;              // The speed at which the enemy sinks through the floor when dead.
     public int scoreValue = 10;                 // The amount added to the player's score when the enemy dies.
     public AudioClip deathClip;                 // The sound to play when the enemy dies.
-
+    Rigidbody rb;
 
     Animator anim;                              // Reference to the animator.
     AudioSource enemyAudio;                     // Reference to the audio source.
     ParticleSystem hitParticles;                // Reference to the particle system that plays when the enemy is damaged.
-    CapsuleCollider capsuleCollider;            // Reference to the capsule collider.
+    Collider capsuleCollider;            // Reference to the capsule collider.
     bool isDead;                                // Whether the enemy is dead.
     bool isSinking;                             // Whether the enemy has started sinking through the floor.
 
     public delegate void EnemyDelegate();
     public event EnemyDelegate deathEvent;
-
+    [SerializeField] Slider healthBar;
 
     void Awake()
     {
@@ -27,7 +28,8 @@ public class EnemyHealth : MonoBehaviour
         anim = GetComponent<Animator>();
         enemyAudio = GetComponent<AudioSource>();
         hitParticles = GetComponentInChildren<ParticleSystem>();
-        capsuleCollider = GetComponent<CapsuleCollider>();
+        capsuleCollider = GetComponent<Collider>();
+        rb = GetComponent<Rigidbody>();
 
         // Setting the current health when the enemy first spawns.
         currentHealth = startingHealth;
@@ -35,6 +37,9 @@ public class EnemyHealth : MonoBehaviour
 
     void Update()
     {
+
+        healthBar.transform.LookAt(Camera.main.transform);
+
         // If the enemy should be sinking...
         if (isSinking)
         {
@@ -43,8 +48,7 @@ public class EnemyHealth : MonoBehaviour
         }
     }
 
-
-    public void TakeDamage(int amount, Vector3 hitPoint)
+    public void TakeDamage(int amount, Vector3 force)
     {
         // If the enemy is dead...
         if (isDead)
@@ -56,7 +60,9 @@ public class EnemyHealth : MonoBehaviour
 
         // Reduce the current health by the amount of damage sustained.
         currentHealth -= amount;
+        healthBar.value = currentHealth;
 
+        rb.AddForce(force);
         // Set the position of the particle system to where the hit was sustained.
         //hitParticles.transform.position = hitPoint;
 
@@ -78,25 +84,18 @@ public class EnemyHealth : MonoBehaviour
         isDead = true;
 
         // Turn the collider into a trigger so shots can pass through it.
-        //capsuleCollider.isTrigger = true;
+        capsuleCollider.isTrigger = true;
+
+
+        // Find the rigidbody component and make it kinematic (since we use Translate to sink the enemy).
+        GetComponent<Rigidbody>().isKinematic = true;
+
+
+        // After 2 seconds destory the enemy.
+        Destroy(gameObject, 5f);
 
         deathEvent();
 
     }
 
-
-    public void StartSinking()
-    {
-        // Find and disable the Nav Mesh Agent.
-        GetComponent<NavMeshAgent>().enabled = false;
-
-        // Find the rigidbody component and make it kinematic (since we use Translate to sink the enemy).
-        GetComponent<Rigidbody>().isKinematic = true;
-
-        // The enemy should no sink.
-        isSinking = true;
-
-        // After 2 seconds destory the enemy.
-        Destroy(gameObject, 2f);
-    }
 }

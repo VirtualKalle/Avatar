@@ -25,7 +25,9 @@ public class EnemyPhysics : MonoBehaviour {
         Destroy(GetComponent<Rigidbody>());
         foreach (GameObject go in bodyParts)
         {
-            go.AddComponent<Rigidbody>();
+            go.GetComponent<Collider>().enabled = true;
+            Rigidbody rb = go.AddComponent<Rigidbody>();
+            rb.mass = 0.2f;
         }
     }
 
