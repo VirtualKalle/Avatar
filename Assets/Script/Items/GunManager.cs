@@ -30,7 +30,7 @@ public class GunManager : MonoBehaviour
 
     private bool isGrabbed;
     private bool shootCoolDown;
-    private float shootCoolDownTime = 0.1f;
+    private float shootCoolDownTime = 1f;
 
     // Use this for initialization
     void Start()
@@ -64,6 +64,7 @@ public class GunManager : MonoBehaviour
             if (GameManager.bulletTime)
             {
                 m_warpManager.QueueAction();
+                Shoot(muzzle.transform.position, muzzle.transform.rotation);
             }
             else
             {
