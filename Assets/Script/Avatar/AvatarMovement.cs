@@ -2,35 +2,142 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class AvatarMovement : MonoBehaviour {
+public class AvatarMovement : MonoBehaviour
+{
 
-	// Use this for initialization
-	void Start () {
-		
-	}
-	
-	// Update is called once per frame
-	void Update () {
+    private bool rotated;
+    [SerializeField] Animator m_animator;
+    private Vector2 move;
+    Vector2 moveInput;
+    float rotate;
+
+    // Use this for initialization
+    void Start()
+    {
+
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
         Move();
-        Twist();
+        //Twist();
+        Rotate();
+    }
+
+    void GetInput()
+    {
+
+        if (OVRInput.Get(OVRInput.RawAxis2D.RThumbstick).magnitude > 0.1)
+        {
+            move = OVRInput.Get(OVRInput.RawAxis2D.RThumbstick);
+        }
+        else
+        {
+            if (Input.GetKey(KeyCode.W) && move.y < 0.99)
+            {
+                move.y += 2 * Time.deltaTime;
+                move.y = Mathf.Max(0, move.y);
+            }
+            else if (Input.GetKey(KeyCode.S) && move.y > -0.99)
+            {
+                move.y -= 2 * Time.deltaTime;
+                move.y = Mathf.Min(0, move.y);
+            }
+
+            if (!Input.GetKey(KeyCode.W) && !Input.GetKey(KeyCode.S))
+            {
+                move.y = 0;
+            }
+
+            if (Input.GetKey(KeyCode.D) && move.x < 0.99)
+            {
+                move.x += 2 * Time.deltaTime;
+                move.x = Mathf.Max(0, move.x);
+            }
+            else if (Input.GetKey(KeyCode.A) && move.x > -0.99)
+            {
+                move.x -= 2 * Time.deltaTime;
+                move.x = Mathf.Min(0, move.x);
+            }
+
+            if (!Input.GetKey(KeyCode.D) && !Input.GetKey(KeyCode.A))
+            {
+                move.x = 0;
+            }
+
+
+        }
+
+        if (Mathf.Abs(OVRInput.Get(OVRInput.RawAxis2D.LThumbstick).x) > 0.1)
+        {
+            rotate = OVRInput.Get(OVRInput.RawAxis2D.LThumbstick).x;
+        }
+        else
+        {
+            if (Input.GetKey(KeyCode.E))
+            {
+                rotate = 1;
+            }
+            else if (Input.GetKey(KeyCode.Q))
+            {
+                rotate = -1;
+            }
+            else
+            {
+                rotate = 0;
+            }
+        }
     }
 
     private void Move()
     {
-        //Debug.Log("MoVE" + OVRInput.Get(OVRInput.RawAxis2D.RThumbstick));
-        if (OVRInput.Get(OVRInput.RawAxis2D.RThumbstick).magnitude > 0.1f)
+        GetInput();
+
+        if (OVRInput.Get(OVRInput.RawAxis2D.RThumbstick).magnitude > 0.1f || Input.anyKey)
         {
-            Debug.Log("Input thumpstick");
+            Debug.Log("Input " + move);
 
             Vector3 fwd = Vector3.ProjectOnPlane((transform.position - Camera.main.transform.position), Vector3.up).normalized;
-            transform.Translate(OVRInput.Get(OVRInput.RawAxis2D.RThumbstick).y * fwd * Time.deltaTime, Space.World);
+            transform.Translate(move.y * fwd * Time.deltaTime, Space.World);
 
 
             Vector3 right = Vector3.Cross((transform.position - Camera.main.transform.position), Vector3.up).normalized;
-            transform.Translate(-OVRInput.Get(OVRInput.RawAxis2D.RThumbstick).x * right * Time.deltaTime, Space.World);
-            //transform.Translate(new Vector3(OVRInput.Get(OVRInput.RawAxis2D.RThumbstick).x, 0, OVRInput.Get(OVRInput.RawAxis2D.RThumbstick).y) * Time.deltaTime, Space.World);
-
+            transform.Translate(-move.x * right * Time.deltaTime, Space.World);
         }
+
+        m_animator.SetFloat("MoveFwd", move.y);
+        m_animator.SetFloat("MoveRight", move.x);
+        if (move.magnitude > 0.01)
+        {
+            m_animator.SetBool("Moving", true);
+        }
+        else if (m_animator.GetBool("Moving"))
+        {
+            m_animator.SetBool("Moving", false);
+        }
+
+    }
+
+    void Rotate()
+    {
+
+
+        if (rotate > 0.1f && !rotated)
+        {
+            transform.Rotate(Vector3.up, 90);
+            rotated = true;
+        }
+        else if (rotate < -0.1f && !rotated)
+        {
+            transform.Rotate(Vector3.up, -90);
+            rotated = true;
+        }
+        else if (rotate > -0.1f && rotate < 0.1f && rotated)
+        {
+            rotated = false;
+        }
+
     }
 
     void Twist()
@@ -45,7 +152,7 @@ public class AvatarMovement : MonoBehaviour {
             Vector3 homeRot;
             if (curRot.y > 180f)
             { // this section determines the direction it returns home 
-                //Debug.Log(curRot.y);
+              //Debug.Log(curRot.y);
                 homeRot = new Vector3(0f, 359.999f, 0f); //it doesnt return to perfect zero 
             }
             else
