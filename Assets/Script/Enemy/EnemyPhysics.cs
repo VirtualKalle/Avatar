@@ -20,14 +20,15 @@ public class EnemyPhysics : MonoBehaviour {
         m_enemyHealth.deathEvent -= Death;
     }
 
-    void Death()
+    void Death(Vector3 force)
     {
         Destroy(GetComponent<Rigidbody>());
         foreach (GameObject go in bodyParts)
         {
             go.GetComponent<Collider>().enabled = true;
-            Rigidbody rb = go.AddComponent<Rigidbody>();
-            rb.mass = 0.2f;
+            Rigidbody rb = go.GetComponent<Rigidbody>();
+            rb.isKinematic = false;
+            rb.AddForce(force / 3);
         }
     }
 

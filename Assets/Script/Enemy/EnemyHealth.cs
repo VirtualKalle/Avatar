@@ -18,7 +18,7 @@ public class EnemyHealth : MonoBehaviour
     bool isDead;                                // Whether the enemy is dead.
     bool isSinking;                             // Whether the enemy has started sinking through the floor.
 
-    public delegate void EnemyDelegate();
+    public delegate void EnemyDelegate(Vector3 force);
     public event EnemyDelegate deathEvent;
     [SerializeField] Slider healthBar;
 
@@ -33,6 +33,16 @@ public class EnemyHealth : MonoBehaviour
 
         // Setting the current health when the enemy first spawns.
         currentHealth = startingHealth;
+    }
+
+    private void OnEnable()
+    {
+        deathEvent += Death;
+    }
+
+    private void OnDisable()
+    {
+        deathEvent -= Death;
     }
 
     void Update()
@@ -62,7 +72,11 @@ public class EnemyHealth : MonoBehaviour
         currentHealth -= amount;
         healthBar.value = currentHealth;
 
+        //Apply strike force
         rb.AddForce(force);
+
+        //Debug.Log("<color=red>Damage force </color>" + force);
+
         // Set the position of the particle system to where the hit was sustained.
         //hitParticles.transform.position = hitPoint;
 
@@ -73,12 +87,12 @@ public class EnemyHealth : MonoBehaviour
         if (currentHealth <= 0)
         {
             // ... the enemy is dead.
-            Death();
+            deathEvent(force);
         }
     }
 
 
-    void Death()
+    void Death(Vector3 force)
     {
         // The enemy is dead.
         isDead = true;
@@ -93,8 +107,6 @@ public class EnemyHealth : MonoBehaviour
 
         // After 2 seconds destory the enemy.
         Destroy(gameObject, 5f);
-
-        deathEvent();
 
     }
 
