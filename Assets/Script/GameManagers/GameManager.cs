@@ -48,7 +48,7 @@ public class GameManager : MonoBehaviour {
     // Update is called once per frame
     void Update () {
 
-        if (OVRInput.GetDown(OVRInput.Button.PrimaryThumbstick) || OVRInput.GetDown(OVRInput.Button.SecondaryThumbstick) || Input.GetKeyDown(KeyCode.Q))
+        if (OVRInput.GetDown(OVRInput.Button.PrimaryThumbstick) || OVRInput.GetDown(OVRInput.Button.SecondaryThumbstick) || Input.GetKeyDown(KeyCode.O))
         {
             if (bulletTime)
             {

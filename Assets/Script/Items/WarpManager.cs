@@ -112,7 +112,7 @@ public class WarpManager : MonoBehaviour
 
         if (action)
         {
-            SpawnAction();
+            //SpawnAction();
             action = false;
         }
 
