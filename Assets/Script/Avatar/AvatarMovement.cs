@@ -10,6 +10,7 @@ public class AvatarMovement : MonoBehaviour
     private Vector2 move;
     Vector2 moveInput;
     float rotate;
+    private bool moveKey;
 
     // Use this for initialization
     void Start()
@@ -34,15 +35,24 @@ public class AvatarMovement : MonoBehaviour
         }
         else
         {
-            if (Input.GetKey(KeyCode.W) && move.y < 0.99)
+            if (moveKey)
+            {
+            moveKey = false;
+            }
+
+            if (Input.GetKey(KeyCode.W))
             {
                 move.y += 2 * Time.deltaTime;
                 move.y = Mathf.Max(0, move.y);
+                move.y = Mathf.Min(1, move.y);
+                moveKey = true;
             }
-            else if (Input.GetKey(KeyCode.S) && move.y > -0.99)
+            else if (Input.GetKey(KeyCode.S))
             {
                 move.y -= 2 * Time.deltaTime;
                 move.y = Mathf.Min(0, move.y);
+                move.y = Mathf.Max(-1, move.y);
+                moveKey = true;
             }
 
             if (!Input.GetKey(KeyCode.W) && !Input.GetKey(KeyCode.S))
@@ -50,15 +60,19 @@ public class AvatarMovement : MonoBehaviour
                 move.y = 0;
             }
 
-            if (Input.GetKey(KeyCode.D) && move.x < 0.99)
+            if (Input.GetKey(KeyCode.D))
             {
                 move.x += 2 * Time.deltaTime;
                 move.x = Mathf.Max(0, move.x);
+                move.x = Mathf.Min(1, move.x);
+                moveKey = true;
             }
-            else if (Input.GetKey(KeyCode.A) && move.x > -0.99)
+            else if (Input.GetKey(KeyCode.A))
             {
                 move.x -= 2 * Time.deltaTime;
                 move.x = Mathf.Min(0, move.x);
+                move.x = Mathf.Max(-1, move.x);
+                moveKey = true;
             }
 
             if (!Input.GetKey(KeyCode.D) && !Input.GetKey(KeyCode.A))
@@ -94,7 +108,7 @@ public class AvatarMovement : MonoBehaviour
     {
         GetInput();
 
-        if (OVRInput.Get(OVRInput.RawAxis2D.RThumbstick).magnitude > 0.1f || Input.anyKey)
+        if (OVRInput.Get(OVRInput.RawAxis2D.RThumbstick).magnitude > 0.1f || moveKey)
         {
             Debug.Log("Input " + move);
 

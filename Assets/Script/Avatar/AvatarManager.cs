@@ -2,7 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class AvatarManager : MonoBehaviour {
+public class AvatarManager : MonoBehaviour
+{
 
     [SerializeField] Transform handRightAvatar;
     [SerializeField] Transform handLeftAvatar;
@@ -14,21 +15,31 @@ public class AvatarManager : MonoBehaviour {
 
 
     [SerializeField] Transform head;
-
+    
     //[SerializeField] Transform body;
     //Vector3 bodyRelativePosition;
     //Quaternion bodyRelativeRotation;
 
 
     // Use this for initialization
-    void Start () {
-		
-	}
+    void Start()
+    {
+        if (handLeft == null)
+            handLeft = GameObject.Find("LeftHandAnchor").transform;
+
+        if (handRight == null)
+            handRight = GameObject.Find("RightHandAnchor").transform;
+
+        if (head == null)
+            head = GameObject.Find("CenterEyeAnchor").transform;
+
+    }
 
 
 
     // Update is called once per frame
-    void Update () {
+    void Update()
+    {
         FollowTransform();
     }
 
@@ -41,6 +52,7 @@ public class AvatarManager : MonoBehaviour {
 
         //handRightAvatar.localPosition = handRight.position - head.position + headAvatar.localPosition;
         handRightAvatar.position = headAvatar.TransformPoint(head.transform.InverseTransformPoint(handRight.position));
+
         handRightAvatar.localRotation = handRight.localRotation;
 
         handLeftAvatar.position = headAvatar.TransformPoint(head.transform.InverseTransformPoint(handLeft.position));
