@@ -83,7 +83,7 @@ public class DebugUIBuilder : MonoBehaviour
     Debug.Assert(instance == null);
     instance = this;
     menuOffset = transform.position; // TODO: this is unpredictable/busted
-    gameObject.SetActive(false);
+    //gameObject.SetActive(false);
     rig = FindObjectOfType<OVRCameraRig>();
     for (int i = 0; i < toEnable.Count; ++i)
     {
@@ -120,9 +120,9 @@ public class DebugUIBuilder : MonoBehaviour
       toEnable.Add(lp.gameObject);
     }
     GetComponent<OVRRaycaster>().pointer = lp.gameObject;
-    lp.gameObject.SetActive(false);
+        lp.gameObject.SetActive(false);
 #if UNITY_EDITOR
-    string scene = SceneManager.GetActiveScene().name;
+        string scene = SceneManager.GetActiveScene().name;
     OVRPlugin.SendEvent("debug_ui_builder",
       ((scene == "DebugUI") ||
        (scene == "DistanceGrab") ||
