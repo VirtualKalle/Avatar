@@ -27,10 +27,15 @@ public class FollowTransform : MonoBehaviour {
             transform.localPosition = trans.position;
             transform.localRotation = trans.rotation;
         }
-        else
+        else if (local)
         {
-        transform.position = Vector3.Lerp(transform.position, trans.position, Time.deltaTime * speed);
-        transform.rotation = Quaternion.Lerp(transform.rotation, trans.rotation, Time.deltaTime * speed);
+            transform.position = Vector3.Lerp(transform.position, trans.position, Time.deltaTime * speed);
+            transform.rotation = Quaternion.Lerp(transform.rotation, trans.rotation, Time.deltaTime * speed);
         }
-	}
+        else if (fix)
+        {
+            transform.position = trans.position;
+            transform.rotation = trans.rotation;
+        }
+    }
 }

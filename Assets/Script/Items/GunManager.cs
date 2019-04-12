@@ -31,6 +31,8 @@ public class GunManager : MonoBehaviour
     private bool isGrabbed;
     private bool shootCoolDown;
     private float shootCoolDownTime = 1f;
+    private bool hasShot;
+    float shootThreshold = 0.5f;
 
     // Use this for initialization
     void Start()
@@ -43,15 +45,22 @@ public class GunManager : MonoBehaviour
         if (/*isGrabbed*/true)
         {
             //Debug.Log("OnTriggerShoot Start");
-            if (item.m_hand == Hand.Left && OVRInput.Get(OVRInput.Axis1D.PrimaryIndexTrigger, OVRInput.Controller.LTouch) > 0.1f)
+            if (item.m_hand == Hand.Left && OVRInput.Get(OVRInput.Axis1D.PrimaryIndexTrigger, OVRInput.Controller.LTouch) > shootThreshold && !hasShot)
             {
                 //Debug.Log("Shoot left");
                 TryShoot();
             }
-            else if (item.m_hand == Hand.Right && OVRInput.Get(OVRInput.Axis1D.PrimaryIndexTrigger, OVRInput.Controller.RTouch) > 0.1f)
+            else if (item.m_hand == Hand.Right && OVRInput.Get(OVRInput.Axis1D.PrimaryIndexTrigger, OVRInput.Controller.RTouch) > shootThreshold && !hasShot)
             {
                 //Debug.Log("Shoot right");
                 TryShoot();
+            }
+            else if (
+                    (item.m_hand == Hand.Left && OVRInput.Get(OVRInput.Axis1D.PrimaryIndexTrigger, OVRInput.Controller.LTouch) < shootThreshold || 
+                    item.m_hand == Hand.Right && OVRInput.Get(OVRInput.Axis1D.PrimaryIndexTrigger, OVRInput.Controller.RTouch) < shootThreshold) &&
+                    hasShot)
+            {
+                hasShot = false;
             }
             //Debug.Log("OnTriggerShoot End");
         }
@@ -59,20 +68,24 @@ public class GunManager : MonoBehaviour
     
     void TryShoot()
     {
-        if (shootCoolDownTimeLeft <= 0)
+        //if (shootCoolDownTimeLeft <= 0)
+        //{
+        //    if (GameManager.bulletTime)
+        //    {
+        //        m_warpManager.QueueAction();
+        //        Shoot(muzzle.transform.position, muzzle.transform.rotation);
+        //    }
+        //    else
+        //    {
+        //    Shoot(muzzle.transform.position, muzzle.transform.rotation);
+        //    }
+        //    shootCoolDownTimeLeft = shootCoolDownTime;
+        //}
+        if (!hasShot)
         {
-            if (GameManager.bulletTime)
-            {
-                m_warpManager.QueueAction();
-                Shoot(muzzle.transform.position, muzzle.transform.rotation);
-            }
-            else
-            {
             Shoot(muzzle.transform.position, muzzle.transform.rotation);
-            }
-            shootCoolDownTimeLeft = shootCoolDownTime;
+            hasShot = true;
         }
-
     }
 
     public void Shoot(Vector3 pos, Quaternion rot)

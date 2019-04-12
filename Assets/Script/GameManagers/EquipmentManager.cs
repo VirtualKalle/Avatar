@@ -45,9 +45,11 @@ public class EquipmentManager : MonoBehaviour {
             }
         }
 
+
+
         if (OVRInput.GetDown(OVRInput.Button.One, OVRInput.Controller.LTouch))
         {
-            if (leftHand[0].m_itemState == ItemState.holstered)
+            if (leftHand[0].m_itemState == ItemState.holstered && leftHand[1].m_itemState != ItemState.unholstering)
             {
                 leftHand[0].Unholster();
                 leftHand[1].Holster();
@@ -61,7 +63,7 @@ public class EquipmentManager : MonoBehaviour {
 
         if (OVRInput.GetDown(OVRInput.Button.Two, OVRInput.Controller.LTouch))
         {
-            if (leftHand[1].m_itemState == ItemState.holstered)
+            if (leftHand[1].m_itemState == ItemState.holstered && leftHand[0].m_itemState != ItemState.unholstering)
             {
                 leftHand[1].Unholster();
                 leftHand[0].Holster();

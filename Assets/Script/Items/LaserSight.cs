@@ -35,7 +35,7 @@ public class LaserSight : MonoBehaviour
     void LaserPoint()
     {
         RaycastHit hit;
-        if (Physics.Raycast(transform.position, transform.forward, out hit, 100))
+        if (Physics.Raycast(muzzle.position, transform.forward, out hit, 100))
         {
             lr.SetPosition(1, hit.point);
         }

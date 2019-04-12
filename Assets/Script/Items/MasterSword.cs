@@ -19,7 +19,7 @@ public class MasterSword : MonoBehaviour
     private float currentVelocityMag;
     private float meanTimeLeft = 0.1f;
     private float meanTimeInterval = 0.05f;
-    private float swordStartThreshold = 1f;
+    private float swordStartThreshold = 10f;
     private float swordStopThreshold = 0.5f;
     private float spawnTrailTimeLeft;
     private float spawnTrailInterval = 0.02f;
@@ -27,10 +27,15 @@ public class MasterSword : MonoBehaviour
     GameObject trailObjectClone;
     Transform Avatar;
     private float maxForce = 1000;
+    [SerializeField] float scaleFactor = 1;
 
     // Use this for initialization
     void Start()
     {
+        if (scaleFactor == 0)
+        {
+            scaleFactor = 1;
+        }
         m_item = GetComponent<Item>();
         Avatar = FindObjectOfType<AvatarManager>().transform;
     }
@@ -70,11 +75,14 @@ public class MasterSword : MonoBehaviour
 
         if (meanTimeLeft < 0)
         {
-            currentVelocity = (Avatar.InverseTransformPoint(transform.position) - lastPos) / Time.deltaTime;
-            //Debug.Log("currentVelocity " + currentVelocity);
+            //currentVelocity = (Avatar.InverseTransformPoint(transform.position) - lastPos) / Time.deltaTime;
+            currentVelocity = (transform.position - Avatar.position - lastPos) / Time.deltaTime;
+
 
             currentVelocityMag = currentVelocity.magnitude;
-            lastPos = Avatar.InverseTransformPoint(transform.position);
+            Debug.Log("currentVelocity " + currentVelocity + "\n currentVelocityMag " + currentVelocity.magnitude);
+            //lastPos = Avatar.InverseTransformPoint(transform.position);
+            lastPos = transform.position - Avatar.position;
             meanTimeLeft = meanTimeInterval;
         }
 
@@ -106,7 +114,7 @@ public class MasterSword : MonoBehaviour
         if (spawnTrailTimeLeft < 0 || (trailObjectClone != null && Vector3.Distance(trailObjectClone.transform.position, transform.position) > 0.05f))
         {
             trailObjectClone = Instantiate(trailObject, transform.position, transform.rotation);
-            trailObjectClone.transform.localScale = transform.lossyScale;
+            trailObjectClone.transform.localScale = transform.lossyScale * scaleFactor;
             Destroy(trailObjectClone, 0.2f);
             spawnTrailTimeLeft = spawnTrailInterval;
         }
