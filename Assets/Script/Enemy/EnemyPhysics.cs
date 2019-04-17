@@ -28,7 +28,7 @@ public class EnemyPhysics : MonoBehaviour {
             go.GetComponent<Collider>().enabled = true;
             Rigidbody rb = go.GetComponent<Rigidbody>();
             rb.isKinematic = false;
-            rb.AddForce(force / 3);
+            //rb.AddForce(force / 3);
         }
     }
 

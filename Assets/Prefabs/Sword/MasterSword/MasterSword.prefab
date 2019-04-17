@@ -286,13 +286,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b4ab985fd3f489949b8aff6abc0d26a0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  BladeRenderer: {fileID: 23881682031993122}
+  blade: {fileID: 1711638328272828}
   red: {fileID: 2100000, guid: 83521ccabd608df4bb94f56de4ad2974, type: 2}
   blue: {fileID: 2100000, guid: 7ae24ea61d710d941b6bb12c5427b4de, type: 2}
   bladeCollider: {fileID: 65030318312874136}
-  SlaveSword: {fileID: 0}
   trailObject: {fileID: 1070200882104490, guid: 4fd2c42d7593e40478bbe317036cafa5,
     type: 2}
+  scaleFactor: 1
 --- !u!114 &114352629883572346
 MonoBehaviour:
   m_ObjectHideFlags: 1

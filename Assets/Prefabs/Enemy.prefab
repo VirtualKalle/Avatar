@@ -44,6 +44,7 @@ GameObject:
   - component: {fileID: 23604965622266448}
   - component: {fileID: 65808953453319656}
   - component: {fileID: 54758889341366146}
+  - component: {fileID: 114765100633542660}
   m_Layer: 0
   m_Name: Cube (1)
   m_TagString: Untagged
@@ -93,6 +94,7 @@ GameObject:
   - component: {fileID: 23784473945986988}
   - component: {fileID: 65505993464546528}
   - component: {fileID: 54458316297799894}
+  - component: {fileID: 114975094088742462}
   m_Layer: 0
   m_Name: Cube
   m_TagString: Untagged
@@ -129,6 +131,7 @@ GameObject:
   - component: {fileID: 23043901459097440}
   - component: {fileID: 65986545902832418}
   - component: {fileID: 54727921717314642}
+  - component: {fileID: 114180547003892118}
   m_Layer: 0
   m_Name: Cube (2)
   m_TagString: Untagged
@@ -497,6 +500,22 @@ MonoBehaviour:
   - {fileID: 1413108887708830}
   - {fileID: 1093499459592968}
   - {fileID: 1713765040294184}
+--- !u!114 &114180547003892118
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1713765040294184}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8ae39370af9582c4a93a5ca6856ec4f4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  plane: {fileID: 0}
+  Centroid: {fileID: 0}
+  SlicePrefab: {fileID: 1256603988826554, guid: ef1066becc180bd4185ebf25b21dde44,
+    type: 2}
+  cutMaterial: {fileID: 2100000, guid: fb4ee835122729245a436955f9671beb, type: 2}
 --- !u!114 &114261122233034992
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -676,6 +695,22 @@ MonoBehaviour:
   m_FillAmount: 1
   m_FillClockwise: 1
   m_FillOrigin: 0
+--- !u!114 &114765100633542660
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1093499459592968}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8ae39370af9582c4a93a5ca6856ec4f4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  plane: {fileID: 0}
+  Centroid: {fileID: 0}
+  SlicePrefab: {fileID: 1256603988826554, guid: ef1066becc180bd4185ebf25b21dde44,
+    type: 2}
+  cutMaterial: {fileID: 2100000, guid: fb4ee835122729245a436955f9671beb, type: 2}
 --- !u!114 &114924260021421722
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -692,6 +727,22 @@ MonoBehaviour:
   m_BlockingMask:
     serializedVersion: 2
     m_Bits: 4294967295
+--- !u!114 &114975094088742462
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1413108887708830}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8ae39370af9582c4a93a5ca6856ec4f4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  plane: {fileID: 0}
+  Centroid: {fileID: 0}
+  SlicePrefab: {fileID: 1256603988826554, guid: ef1066becc180bd4185ebf25b21dde44,
+    type: 2}
+  cutMaterial: {fileID: 2100000, guid: fb4ee835122729245a436955f9671beb, type: 2}
 --- !u!136 &136020948490271940
 CapsuleCollider:
   m_ObjectHideFlags: 1

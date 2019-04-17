@@ -5,17 +5,17 @@ using UnityEngine;
 public class MasterSword : MonoBehaviour
 {
     Item m_item;
-    [SerializeField] Renderer BladeRenderer;
+    [SerializeField] GameObject blade;
+    Renderer BladeRenderer;
     [SerializeField] Material red;
     [SerializeField] Material blue;
     [SerializeField] Collider bladeCollider;
-    [SerializeField] GameObject SlaveSword;
-    GameObject slaveClone;
 
-    private float prevVelocity;
     private bool activeSword;
     private Vector3 lastPos;
     private Vector3 currentVelocity;
+    private Vector3 lastBladePos;
+    private Vector3 currentBladeWorldVelocity;
     private float currentVelocityMag;
     private float meanTimeLeft = 0.1f;
     private float meanTimeInterval = 0.05f;
@@ -38,6 +38,7 @@ public class MasterSword : MonoBehaviour
         }
         m_item = GetComponent<Item>();
         Avatar = FindObjectOfType<AvatarManager>().transform;
+        BladeRenderer = blade.GetComponent<Renderer>();
     }
 
     // Update is called once per frame
@@ -63,9 +64,16 @@ public class MasterSword : MonoBehaviour
         if (enemyHealth != null)
         {
             Vector3 force = currentVelocity * 50;
-            int damage = (int) currentVelocity.magnitude;
+            int damage = (int)currentVelocity.magnitude;
             force = force.magnitude > maxForce ? force.normalized * maxForce : force;
             enemyHealth.TakeDamage(damage, force);
+        }
+
+        MeshSlicer meshSlicer = other.GetComponentInParent<MeshSlicer>();
+        if (meshSlicer != null && activeSword)
+        {
+
+            meshSlicer.Cut(transform.position, Vector3.Cross(transform.forward, currentBladeWorldVelocity.normalized));
         }
     }
 
@@ -75,14 +83,15 @@ public class MasterSword : MonoBehaviour
 
         if (meanTimeLeft < 0)
         {
-            //currentVelocity = (Avatar.InverseTransformPoint(transform.position) - lastPos) / Time.deltaTime;
             currentVelocity = (transform.position - Avatar.position - lastPos) / Time.deltaTime;
-
 
             currentVelocityMag = currentVelocity.magnitude;
             Debug.Log("currentVelocity " + currentVelocity + "\n currentVelocityMag " + currentVelocity.magnitude);
-            //lastPos = Avatar.InverseTransformPoint(transform.position);
             lastPos = transform.position - Avatar.position;
+
+            currentBladeWorldVelocity = (blade.transform.position - lastBladePos) / Time.deltaTime;
+            lastBladePos = blade.transform.position;
+
             meanTimeLeft = meanTimeInterval;
         }
 
