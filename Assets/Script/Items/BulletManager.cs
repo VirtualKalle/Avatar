@@ -29,6 +29,11 @@ public class BulletManager : MonoBehaviour {
         enemyHealth.TakeDamage(10, transform.forward * 1000);
         }
 
+        MeshSlicer meshSlicer = collision.gameObject.GetComponentInParent<MeshSlicer>();
+        if (meshSlicer != null)
+        {
+            meshSlicer.Cut(transform.position, Vector3.Cross(transform.forward, transform.right));
+        }
         End();
     }
 

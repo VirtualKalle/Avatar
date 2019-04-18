@@ -10,6 +10,7 @@ public class MeshSlicer : MonoBehaviour
     private int[] triangles;
     private Vector3[] normals;
     private Vector2[] uv;
+    private Collider m_collider;
     [SerializeField] GameObject plane;
     Plane cutPlane;
     [SerializeField] GameObject Centroid;
@@ -18,10 +19,11 @@ public class MeshSlicer : MonoBehaviour
 
 
     // Use this for initialization
-    void Start()
+    void Awake()
     {
         mesh = GetComponent<MeshFilter>().mesh;
         size = GetComponent<Renderer>().bounds.size;
+        m_collider = GetComponent<Collider>();
         vertices = mesh.vertices;
         triangles = mesh.triangles;
         normals = mesh.normals;
@@ -84,7 +86,7 @@ public class MeshSlicer : MonoBehaviour
     {
 
         Vector3 faceDirection = Vector3.Cross(face[1] - face[0], face[2] - face[0]);
-        Debug.Log(Vector3.Angle(direction, faceDirection));
+        //Debug.Log(Vector3.Angle(direction, faceDirection));
         if (Vector3.Angle(direction, faceDirection) > 90f)
         {
             face.Reverse();
@@ -100,8 +102,15 @@ public class MeshSlicer : MonoBehaviour
     }
 
 
-    public void Cut(Vector3 cutPos, Vector3 cutNormal)
+    public void Cut(Vector3 cutPos, Vector3 cutNormalList)
     {
+        Cut(cutPos, new List<Vector3>(new Vector3[] { cutNormalList }));
+    }
+
+    public void Cut(Vector3 cutPos, List<Vector3> cutNormalList)
+    {
+        Vector3 cutNormal = cutNormalList[0];
+        cutNormalList.RemoveAt(0);
         cutPlane = new Plane(cutNormal, cutPos);
         Vector3 cutMidPoint = cutPlane.ClosestPointOnPlane(transform.position);
 
@@ -109,7 +118,6 @@ public class MeshSlicer : MonoBehaviour
         List<int> rightTris = new List<int>();
         List<Vector3> leftVerts = new List<Vector3>();
         List<int> leftTris = new List<int>();
-
 
         for (int i = 0; i < triangles.Length / 3; i++)
         {
@@ -128,6 +136,11 @@ public class MeshSlicer : MonoBehaviour
             for (int j = 0; j < 3; j++)
             {
                 vertex = transform.TransformPoint(vertices[triangles[i * 3 + j]]);
+                //if (cutPlane.GetDistanceToPoint(vertex) < 0.001)
+                //{
+                //    vertices[triangles[i * 3 + j]] += cutNormal.normalized * 0.001f;
+                //}
+
                 if (cutPlane.GetSide(vertex))
                 {
                     tempRightVertsWorld1.Add(vertex);
@@ -154,7 +167,7 @@ public class MeshSlicer : MonoBehaviour
                     leftTris.Add(leftVerts.Count);
                     leftVerts.Add(transform.InverseTransformPoint(surfVerts[k]));
                 }
-                
+
                 List<Vector3> rightInside = FaceDirection(new List<Vector3>(new Vector3[] { cutMidPoint, surfVerts[9], surfVerts[10] }), -cutNormal);
                 List<Vector3> leftInside = FaceDirection(new List<Vector3>(new Vector3[] { cutMidPoint, surfVerts[9], surfVerts[10] }), cutNormal);
 
@@ -216,41 +229,93 @@ public class MeshSlicer : MonoBehaviour
                 leftTris.Add(leftVerts.Count - 1);
             }
 
-
-
-
-
-
         }
 
-        Mesh rightMesh = new Mesh();
-        rightMesh.vertices = rightVerts.ToArray();
-        rightMesh.triangles = rightTris.ToArray();
-        rightMesh.RecalculateBounds();
-        rightMesh.RecalculateNormals();
-        rightMesh.RecalculateTangents();
+        if (rightVerts.Count > 0)
+        {
 
-        GameObject rightGO = Instantiate(SlicePrefab, transform.TransformPoint(0, 0, 0), transform.rotation);
-        rightGO.transform.localScale = transform.localScale;
+            m_collider.enabled = false;
 
-        rightGO.GetComponent<MeshFilter>().mesh = rightMesh;
-        rightGO.GetComponent<MeshRenderer>().material = cutMaterial;
-        rightGO.GetComponent<MeshCollider>().sharedMesh = rightMesh;
+            Mesh rightMesh = new Mesh();
+            rightMesh.vertices = rightVerts.ToArray();
+            rightMesh.triangles = rightTris.ToArray();
+            rightMesh.RecalculateBounds();
+            rightMesh.RecalculateNormals();
+            rightMesh.RecalculateTangents();
 
-        Mesh leftMesh = new Mesh();
-        leftMesh.vertices = leftVerts.ToArray();
-        leftMesh.triangles = leftTris.ToArray();
-        leftMesh.RecalculateBounds();
-        leftMesh.RecalculateNormals();
-        leftMesh.RecalculateTangents();
 
-        GameObject leftGO = Instantiate(SlicePrefab, transform.TransformPoint(0, 0, 0), transform.rotation);
-        leftGO.transform.localScale = transform.localScale;
-        leftGO.GetComponent<MeshFilter>().mesh = leftMesh;
-        leftGO.GetComponent<MeshRenderer>().material = cutMaterial;
-        leftGO.GetComponent<MeshCollider>().sharedMesh = leftMesh;
+            GameObject rightGO = InstansiateNewSlice(rightMesh);
+            //GameObject rightGO = Instantiate(SlicePrefab, transform.TransformPoint(0, 0, 0), transform.rotation);
+            //rightGO.transform.localScale = transform.localScale;
+            //rightGO.GetComponent<MeshFilter>().mesh = rightMesh;
+            //rightGO.GetComponent<MeshRenderer>().material = cutMaterial;
+            //rightGO.GetComponent<MeshCollider>().sharedMesh = rightMesh;
+            MeshSlicer rightSlicer = rightGO.GetComponent<MeshSlicer>();
+            //StartCoroutine(sliceNext(cutNormalList, rightSlicer, cutPos));            
+            if (cutNormalList.Count > 0)
+            {
+                rightSlicer.Cut(cutPos, new List<Vector3>(cutNormalList));
+            }
+        }
 
-        Destroy(gameObject);
+        if (leftVerts.Count > 0)
+        {
+
+            Mesh leftMesh = new Mesh();
+            leftMesh.vertices = leftVerts.ToArray();
+            leftMesh.triangles = leftTris.ToArray();
+            leftMesh.RecalculateBounds();
+            leftMesh.RecalculateNormals();
+            leftMesh.RecalculateTangents();
+
+            GameObject leftGO = InstansiateNewSlice(leftMesh);
+            //GameObject leftGO = Instantiate(SlicePrefab, transform.TransformPoint(0, 0, 0), transform.rotation);
+            //leftGO.transform.localScale = transform.localScale;
+            //leftGO.GetComponent<MeshFilter>().mesh = leftMesh;
+            //leftGO.GetComponent<MeshRenderer>().material = cutMaterial;
+            //leftGO.GetComponent<MeshCollider>().sharedMesh = leftMesh;
+            MeshSlicer leftSlicer = leftGO.GetComponent<MeshSlicer>();
+            //StartCoroutine(sliceNext(cutNormalList, leftSlicer, cutPos));
+            if (cutNormalList.Count > 0)
+            {
+                leftSlicer.Cut(cutPos, new List<Vector3>(cutNormalList));
+            }
+        }
+
+            Destroy(gameObject);
+        
+
+    }
+
+    GameObject InstansiateNewSlice(Mesh mesh)
+    {
+        GameObject go = new GameObject("Slice");
+        go.transform.position = transform.position;
+        go.transform.rotation = transform.rotation;
+        go.transform.localScale = transform.localScale;
+        go.AddComponent<MeshFilter>().mesh = mesh;
+        go.AddComponent<MeshRenderer>().material = cutMaterial;
+        MeshCollider meshCollider = go.AddComponent<MeshCollider>();
+        meshCollider.sharedMesh = mesh;
+        meshCollider.convex = true;
+        go.AddComponent<Rigidbody>();
+        MeshSlicer slicer = go.AddComponent<MeshSlicer>();
+        slicer.cutMaterial = cutMaterial;
+        return go;
+    }
+
+    IEnumerator sliceNext(List<Vector3> cutNormalList, MeshSlicer slicer, Vector3 cutPos)
+    {
+        yield return null;
+        Debug.Log("cutNormalList.Count " + cutNormalList.Count);
+        if (cutNormalList.Count > 0)
+        {
+
+            slicer.Cut(cutPos, new List<Vector3>(cutNormalList));
+            Destroy(gameObject);
+        }
+
+
     }
 
 
@@ -259,7 +324,9 @@ public class MeshSlicer : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.Q))
         {
-            Cut(plane.transform.position, plane.transform.up);
+
+            Cut(transform.position, new List<Vector3>(new Vector3[] { transform.TransformDirection(-1, 1, 0), transform.TransformDirection(0, 1, 0)/*, transform.TransformDirection(1, 1, 0) */}));
+            UnityEditor.EditorApplication.isPaused = true;
         }
     }
 }

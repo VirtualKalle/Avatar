@@ -86,7 +86,7 @@ public class MasterSword : MonoBehaviour
             currentVelocity = (transform.position - Avatar.position - lastPos) / Time.deltaTime;
 
             currentVelocityMag = currentVelocity.magnitude;
-            Debug.Log("currentVelocity " + currentVelocity + "\n currentVelocityMag " + currentVelocity.magnitude);
+            //Debug.Log("currentVelocity " + currentVelocity + "\n currentVelocityMag " + currentVelocity.magnitude);
             lastPos = transform.position - Avatar.position;
 
             currentBladeWorldVelocity = (blade.transform.position - lastBladePos) / Time.deltaTime;

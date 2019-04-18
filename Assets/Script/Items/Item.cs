@@ -65,15 +65,15 @@ public class Item : MonoBehaviour
 
             if ((target.position - transform.position).magnitude > 0.1 * distance)
             {
-                transform.Translate((target.position - transform.position) * 20 * distance * Time.deltaTime, Space.World);
+                transform.Translate((target.position - transform.position) * 30 * distance * Time.deltaTime, Space.World);
                 transform.Rotate((-360 * 4) * Time.deltaTime, 0, 0);
-                Debug.Log("Translate distance left" + (target.position - transform.position).magnitude + "of " + transform.name);
+                //Debug.Log("Translate distance left" + (target.position - transform.position).magnitude + "of " + transform.name);
             }
             else
             {
                 transform.position = Vector3.Lerp(transform.position, target.position, Time.deltaTime * distance * 100);
                 transform.rotation = Quaternion.Lerp(transform.rotation, target.rotation, Time.deltaTime * 20);
-                Debug.Log("Lerp distance left " + (target.position - transform.position).magnitude + "of " + transform.name);
+                //Debug.Log("Lerp distance left " + (target.position - transform.position).magnitude + "of " + transform.name);
             }
 
         }
