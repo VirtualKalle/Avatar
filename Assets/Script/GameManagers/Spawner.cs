@@ -22,7 +22,8 @@ public class Spawner : MonoBehaviour {
 	void Update ()
     {
 
-        if (enemycount < 10)
+        //if (!FindObjectOfType<EnemyHealth>())
+        if (FindObjectsOfType<EnemyHealth>().Length < 5)
         {
             SpawnCountDown();
         }

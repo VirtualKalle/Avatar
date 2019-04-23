@@ -63,7 +63,8 @@ public class MasterSword : MonoBehaviour
         EnemyHealth enemyHealth = other.GetComponentInParent<EnemyHealth>();
         if (enemyHealth != null)
         {
-            Vector3 force = currentVelocity * 50;
+            //Vector3 force = currentVelocity * 50;
+            Vector3 force = transform.forward * 50;
             int damage = (int)currentVelocity.magnitude;
             force = force.magnitude > maxForce ? force.normalized * maxForce : force;
             enemyHealth.TakeDamage(damage, force);
@@ -72,8 +73,7 @@ public class MasterSword : MonoBehaviour
         MeshSlicer meshSlicer = other.GetComponentInParent<MeshSlicer>();
         if (meshSlicer != null && activeSword)
         {
-
-            meshSlicer.Cut(transform.position, Vector3.Cross(transform.forward, currentBladeWorldVelocity.normalized));
+            meshSlicer.TryCut(transform.position, Vector3.Cross(transform.forward, currentBladeWorldVelocity.normalized));
         }
     }
 

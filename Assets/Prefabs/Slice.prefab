@@ -23,6 +23,7 @@ GameObject:
   - component: {fileID: 23740574903741548}
   - component: {fileID: 64952307555749766}
   - component: {fileID: 54318791601678466}
+  - component: {fileID: 114951178713799716}
   m_Layer: 0
   m_Name: Slice
   m_TagString: Untagged
@@ -111,6 +112,21 @@ MeshCollider:
   m_Enabled: 1
   serializedVersion: 3
   m_Convex: 1
-  m_CookingOptions: -1
+  m_CookingOptions: 14
   m_SkinWidth: 0.01
   m_Mesh: {fileID: 0}
+--- !u!114 &114951178713799716
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1256603988826554}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8ae39370af9582c4a93a5ca6856ec4f4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  plane: {fileID: 0}
+  Centroid: {fileID: 1681390578461572, guid: eec2aaec4a42d454f8196db1cdb3f1ae, type: 2}
+  SlicePrefab: {fileID: 1256603988826554}
+  cutMaterial: {fileID: 2100000, guid: fb4ee835122729245a436955f9671beb, type: 2}

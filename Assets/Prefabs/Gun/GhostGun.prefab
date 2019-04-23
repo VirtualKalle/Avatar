@@ -242,8 +242,8 @@ MonoBehaviour:
   m_warpManager: {fileID: 0}
   m_gunManager: {fileID: 0}
   muzzle: {fileID: 1138656019022836}
-  startPosition: {x: 1.0501285, y: 0.24390572, z: -1.4734335}
-  startRotation: {x: -0.64408076, y: -0.08182737, z: 0.111020595, w: -0.752422}
+  startPosition: {x: -2.8884764, y: 0.24422325, z: 0.7202108}
+  startRotation: {x: -0.7919684, y: -0.03225921, z: 0.1366671, w: -0.594195}
   recordedTargetPosition: {x: 0, y: 0, z: 0}
   recordedTargetRotation: {x: 0, y: 0, z: 0, w: 0}
   liveTargetTransform: {fileID: 0}

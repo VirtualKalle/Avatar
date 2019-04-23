@@ -26,13 +26,22 @@ public class BulletManager : MonoBehaviour {
 
         if (enemyHealth)
         {
-        enemyHealth.TakeDamage(10, transform.forward * 1000);
+        enemyHealth.TakeDamage(10, (enemyHealth.transform.position - transform.position).normalized * 1000);
         }
 
         MeshSlicer meshSlicer = collision.gameObject.GetComponentInParent<MeshSlicer>();
         if (meshSlicer != null)
         {
-            meshSlicer.Cut(transform.position, Vector3.Cross(transform.forward, transform.right));
+
+            List<Vector3> cutPlanes = new List<Vector3>();
+
+            cutPlanes.Add(transform.TransformDirection(new Vector3(1, Random.Range(-1f, 1f), 0)));
+            cutPlanes.Add(transform.TransformDirection(new Vector3(1, Random.Range(-1f, 1f), Random.Range(-0.2f, 0.2f))));
+            cutPlanes.Add(transform.TransformDirection(new Vector3(Random.Range(-1f, 1f), Random.Range(-1f, 1f), Random.Range(-0.2f, 0.2f))));
+
+
+            meshSlicer.TryCut(transform.position, cutPlanes);
+            
         }
         End();
     }

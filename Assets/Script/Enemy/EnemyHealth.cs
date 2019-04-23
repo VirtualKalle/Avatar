@@ -10,6 +10,7 @@ public class EnemyHealth : MonoBehaviour
     public int scoreValue = 10;                 // The amount added to the player's score when the enemy dies.
     public AudioClip deathClip;                 // The sound to play when the enemy dies.
     Rigidbody rb;
+    MeshSlicer[] m_meshSlicer;
 
     Animator anim;                              // Reference to the animator.
     AudioSource enemyAudio;                     // Reference to the audio source.
@@ -30,6 +31,7 @@ public class EnemyHealth : MonoBehaviour
         hitParticles = GetComponentInChildren<ParticleSystem>();
         capsuleCollider = GetComponent<Collider>();
         rb = GetComponent<Rigidbody>();
+        m_meshSlicer = GetComponentsInChildren<MeshSlicer>();
 
         // Setting the current health when the enemy first spawns.
         currentHealth = startingHealth;
