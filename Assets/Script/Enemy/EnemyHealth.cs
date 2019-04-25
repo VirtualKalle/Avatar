@@ -99,8 +99,8 @@ public class EnemyHealth : MonoBehaviour
         // The enemy is dead.
         isDead = true;
 
-        // Turn the collider into a trigger so shots can pass through it.
-        capsuleCollider.isTrigger = true;
+        // Turn off health bar.
+        healthBar.gameObject.SetActive(false);
 
 
         // Find the rigidbody component and make it kinematic (since we use Translate to sink the enemy).

@@ -112,8 +112,8 @@ MeshCollider:
   m_Enabled: 1
   serializedVersion: 3
   m_Convex: 1
-  m_CookingOptions: 14
-  m_SkinWidth: 0.01
+  m_CookingOptions: 10
+  m_SkinWidth: 0.001
   m_Mesh: {fileID: 0}
 --- !u!114 &114951178713799716
 MonoBehaviour:
@@ -130,3 +130,4 @@ MonoBehaviour:
   Centroid: {fileID: 1681390578461572, guid: eec2aaec4a42d454f8196db1cdb3f1ae, type: 2}
   SlicePrefab: {fileID: 1256603988826554}
   cutMaterial: {fileID: 2100000, guid: fb4ee835122729245a436955f9671beb, type: 2}
+  isCut: 0

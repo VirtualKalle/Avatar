@@ -174,7 +174,7 @@ public class MeshSlicer : MonoBehaviour
         Vector3 cutNormal = cutNormalList[0];
         cutNormalList.RemoveAt(0);
         cutPlane = new Plane(cutNormal, cutPos);
-        Vector3 cutMidPoint = new Vector3();
+        Vector3 cutMidPointLocal = new Vector3();
         List<Vector3> rightVerts = new List<Vector3>();
         List<int> rightTris = new List<int>();
         List<Vector3> leftVerts = new List<Vector3>();
@@ -203,7 +203,7 @@ public class MeshSlicer : MonoBehaviour
 
                 if (Mathf.Abs(cutPlane.GetDistanceToPoint(vertex)) < transform.lossyScale.magnitude * 0.001f)
                 {
-                    Debug.Log("Cut vertex! Distance " + cutPlane.GetDistanceToPoint(vertex));
+                    //Debug.Log("Cut vertex! Distance " + cutPlane.GetDistanceToPoint(vertex));
 
                     tempRightVertsWorld1.Add(vertex);
                     tempLeftVertsWorld1.Add(vertex);
@@ -221,7 +221,7 @@ public class MeshSlicer : MonoBehaviour
 
             if (tempRightVertsWorld1.Count == 1 && tempLeftVertsWorld1.Count == 2)
             {
-                Debug.Log("Split through face (left)");
+                //Debug.Log("Split through face (left)");
                 List<Vector3> surfVerts = SplitFaceTriangles(tempLeftVertsWorld1, tempRightVertsWorld1, cutPlane, initialDirection);
 
                 for (int k = 0; k < 3; k++)
@@ -245,7 +245,7 @@ public class MeshSlicer : MonoBehaviour
 
             if (tempLeftVertsWorld1.Count == 1 && tempRightVertsWorld1.Count == 2)
             {
-                Debug.Log("Split through face (right)");
+                //Debug.Log("Split through face (right)");
                 List<Vector3> surfVerts = SplitFaceTriangles(tempRightVertsWorld1, tempLeftVertsWorld1, cutPlane, initialDirection);
 
                 for (int k = 0; k < 3; k++)
@@ -269,7 +269,7 @@ public class MeshSlicer : MonoBehaviour
             // Split face through vertex
             if (tempRightVertsWorld1.Count == 2 && tempLeftVertsWorld1.Count == 2)
             {
-                Debug.Log("Split through vertex");
+                //Debug.Log("Split through vertex");
                 List<Vector3> surfVerts = SplitVertexTriangles(tempRightVertsWorld1, tempLeftVertsWorld1, cutPlane, initialDirection);
 
                 for (int k = 0; k < 3; k++)
@@ -293,7 +293,7 @@ public class MeshSlicer : MonoBehaviour
             // Split at edge of face (left)
             if (tempRightVertsWorld1.Count == 2 && tempLeftVertsWorld1.Count == 3)
             {
-                Debug.Log("Split at edge (left)");
+                //Debug.Log("Split at edge (left)");
                 for (int j = 0; j < 3; j++)
                 {
                     leftTris.Add(leftVerts.Count);
@@ -327,82 +327,89 @@ public class MeshSlicer : MonoBehaviour
 
         }
 
-        for (int k = 0; k < insideVerts.Count; k++)
+        if (insideVerts.Count > 0)
         {
-            cutMidPoint += insideVerts[k];
-        }
-        cutMidPoint /= insideVerts.Count;
-
-
-        for (int k = 0; k < insideVerts.Count / 2; k++)
-        {
-            rightTris.Add(rightVerts.Count + 0);
-            rightTris.Add(rightVerts.Count + 1);
-            rightTris.Add(rightVerts.Count + 2);
-            rightVerts.AddRange(FaceDirection(new List<Vector3>(new Vector3[] { insideVerts[k * 2], insideVerts[k * 2 + 1], cutMidPoint }), transform.InverseTransformDirection(-cutPlane.normal)));
-
-
-            leftTris.Add(leftVerts.Count + 0);
-            leftTris.Add(leftVerts.Count + 1);
-            leftTris.Add(leftVerts.Count + 2);
-            leftVerts.AddRange(FaceDirection(new List<Vector3>(new Vector3[] { insideVerts[k * 2], insideVerts[k * 2 + 1], cutMidPoint }), transform.InverseTransformDirection(cutPlane.normal)));
-        }
-
-        if (rightVerts.Count > 0)
-        {
-
-            m_collider.enabled = false;
-
-            Mesh rightMesh = new Mesh();
-            rightMesh.vertices = rightVerts.ToArray();
-            rightMesh.triangles = rightTris.ToArray();
-            rightMesh.RecalculateBounds();
-            rightMesh.RecalculateNormals();
-            rightMesh.RecalculateTangents();
-
-            GameObject rightGO = InstansiateNewSlice(rightMesh, cutPos);
-
-            Destroy(rightGO, 3);
-
-            MeshSlicer rightSlicer = rightGO.GetComponent<MeshSlicer>();
-
-            if (cutNormalList.Count > 0)
+            for (int k = 0; k < insideVerts.Count; k++)
             {
-                Debug.Log("Cutting right again");
-                rightSlicer.Cut(cutPos, new List<Vector3>(cutNormalList));
+                cutMidPointLocal += insideVerts[k];
+            }
+            cutMidPointLocal /= insideVerts.Count;
+
+
+            for (int k = 0; k < insideVerts.Count / 2; k++)
+            {
+                rightTris.Add(rightVerts.Count + 0);
+                rightTris.Add(rightVerts.Count + 1);
+                rightTris.Add(rightVerts.Count + 2);
+                rightVerts.AddRange(FaceDirection(new List<Vector3>(new Vector3[] { insideVerts[k * 2], insideVerts[k * 2 + 1], cutMidPointLocal }), transform.InverseTransformDirection(-cutPlane.normal)));
+
+
+                leftTris.Add(leftVerts.Count + 0);
+                leftTris.Add(leftVerts.Count + 1);
+                leftTris.Add(leftVerts.Count + 2);
+                leftVerts.AddRange(FaceDirection(new List<Vector3>(new Vector3[] { insideVerts[k * 2], insideVerts[k * 2 + 1], cutMidPointLocal }), transform.InverseTransformDirection(cutPlane.normal)));
             }
 
-        }
-
-        if (leftVerts.Count > 0)
-        {
-
-            Mesh leftMesh = new Mesh();
-            leftMesh.vertices = leftVerts.ToArray();
-            leftMesh.triangles = leftTris.ToArray();
-            leftMesh.RecalculateBounds();
-            leftMesh.RecalculateNormals();
-            leftMesh.RecalculateTangents();
-
-            GameObject leftGO = InstansiateNewSlice(leftMesh, cutPos);
-            MeshSlicer leftSlicer = leftGO.GetComponent<MeshSlicer>();
-
-            Destroy(leftGO, 3);
-
-            if (cutNormalList.Count > 0)
+            if (rightVerts.Count > 0)
             {
-                Debug.Log("Cutting left again");
-                leftSlicer.Cut(cutPos, new List<Vector3>(cutNormalList));
+
+                m_collider.enabled = false;
+
+                Mesh rightMesh = new Mesh();
+                rightMesh.vertices = rightVerts.ToArray();
+                rightMesh.triangles = rightTris.ToArray();
+                rightMesh.RecalculateBounds();
+                rightMesh.RecalculateNormals();
+                rightMesh.RecalculateTangents();
+
+                GameObject rightGO = InstansiateNewSlice(rightMesh, cutPlane.normal);
+
+                Destroy(rightGO, 3);
+
+                MeshSlicer rightSlicer = rightGO.GetComponent<MeshSlicer>();
+
+                if (cutNormalList.Count > 0)
+                {
+                    //Debug.Log("Cutting right again");
+                    rightSlicer.Cut(cutPos, new List<Vector3>(cutNormalList));
+                }
+
             }
+
+            if (leftVerts.Count > 0)
+            {
+
+                Mesh leftMesh = new Mesh();
+                leftMesh.vertices = leftVerts.ToArray();
+                leftMesh.triangles = leftTris.ToArray();
+                leftMesh.RecalculateBounds();
+                leftMesh.RecalculateNormals();
+                leftMesh.RecalculateTangents();
+                GameObject leftGO = InstansiateNewSlice(leftMesh, -cutPlane.normal);
+                MeshSlicer leftSlicer = leftGO.GetComponent<MeshSlicer>();
+
+                Destroy(leftGO, 3);
+
+                if (cutNormalList.Count > 0)
+                {
+                    //Debug.Log("Cutting left again");
+                    leftSlicer.Cut(cutPos, new List<Vector3>(cutNormalList));
+                }
+            }
+            Destroy(gameObject);
+
+        }
+        else if (cutNormalList.Count > 0)
+        {
+            Cut(cutPos, new List<Vector3>(cutNormalList));
         }
 
-        Destroy(gameObject);
 
     }
 
     #endregion
 
-    GameObject InstansiateNewSlice(Mesh mesh, Vector3 cutPos)
+    GameObject InstansiateNewSlice(Mesh mesh, Vector3 splitForce)
     {
         GameObject go = new GameObject("Slice");
         go.transform.position = transform.position;
@@ -411,14 +418,19 @@ public class MeshSlicer : MonoBehaviour
         go.AddComponent<MeshFilter>().mesh = mesh;
         go.AddComponent<MeshRenderer>().material = cutMaterial;
         MeshCollider meshCollider = go.AddComponent<MeshCollider>();
+        meshCollider.cookingOptions = MeshColliderCookingOptions.None;
         meshCollider.sharedMesh = mesh;
         meshCollider.convex = true;
+
         Rigidbody slice_rb = go.AddComponent<Rigidbody>();
         slice_rb.mass = 0.3f;
+        slice_rb.centerOfMass = go.transform.InverseTransformPoint(meshCollider.bounds.center);
         slice_rb.velocity = rb.velocity;
         slice_rb.angularVelocity = rb.angularVelocity;
-        slice_rb.AddExplosionForce(100, cutPos, 1);
 
+
+        slice_rb.AddForce(splitForce, ForceMode.Impulse);
+        
         MeshSlicer slicer = go.AddComponent<MeshSlicer>();
         slicer.cutMaterial = cutMaterial;
         slicer.isCut = true;
@@ -432,12 +444,11 @@ public class MeshSlicer : MonoBehaviour
         {
 
             List<Vector3> cutPlanes = new List<Vector3>();
-            for (int i = 0; i < 3; i++)
-            {
-                cutPlanes.Add(transform.TransformDirection(new Vector3(Random.Range(-1f, 1f), Random.Range(-1f, 1f), Random.Range(-0.2f, 0.2f))));
-            }
+            //for (int i = 0; i < 3; i++)
+            //{
+            //    cutPlanes.Add(transform.TransformDirection(new Vector3(Random.Range(-1f, 1f), Random.Range(-1f, 1f), Random.Range(-0.2f, 0.2f))));
+            //}
             Cut(transform.position, new List<Vector3>(new Vector3[] { transform.TransformDirection(1, 0, 0), transform.TransformDirection(0, 1, 0), transform.TransformDirection(0, 0, 1), transform.TransformDirection(0, 1, 1) }));
-            Cut(transform.position, cutPlanes);
 
             //cutPlanes.Add(transform.TransformDirection(1, 0, 0));
             //Cut(transform.position, cutPlanes);
