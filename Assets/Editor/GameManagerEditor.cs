@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
 
-[CustomEditor(typeof(GameManager))]
+[CustomEditor(typeof(AvatarGameManager))]
 public class GameManagerEditor : Editor
 {
 
@@ -15,11 +15,11 @@ public class GameManagerEditor : Editor
 
         if(debug)
         {
-            GameManager.DebugMode = true;
+            AvatarGameManager.DebugMode = true;
         }
         else
         {
-            GameManager.DebugMode = false;
+            AvatarGameManager.DebugMode = false;
         }
     }
 }

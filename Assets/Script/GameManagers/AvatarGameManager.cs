@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class GameManager : MonoBehaviour {
+public class AvatarGameManager : MonoBehaviour {
 
     public static bool DebugMode;
     public static bool bulletTime;
@@ -14,8 +14,8 @@ public class GameManager : MonoBehaviour {
     [SerializeField] Text unscaledTime;
 
     public delegate void GameManagerDelegate();
-    public static GameManagerDelegate BulletTime;
-    public static GameManagerDelegate RealTime;
+    public static GameManagerDelegate bulletTimeEvent;
+    public static GameManagerDelegate realTimeEvent;
 
 
     // Use this for initialization
@@ -32,7 +32,7 @@ public class GameManager : MonoBehaviour {
         Time.timeScale = 1 * timeScaler;
         Time.fixedDeltaTime = Time.fixedDeltaTime * timeScaler;
         bulletTime = true;
-        BulletTime();
+        bulletTimeEvent();
     }
 
     void SetRealTime()
@@ -42,13 +42,14 @@ public class GameManager : MonoBehaviour {
 
         Time.fixedDeltaTime /= timeScaler;
         bulletTime = false;
-        RealTime();
+        realTimeEvent();
     }
 
     // Update is called once per frame
     void Update () {
 
-        if (OVRInput.GetDown(OVRInput.Button.PrimaryThumbstick) || OVRInput.GetDown(OVRInput.Button.SecondaryThumbstick) || Input.GetKeyDown(KeyCode.O))
+        //if (OVRInput.GetDown(OVRInput.Button.PrimaryThumbstick) || OVRInput.GetDown(OVRInput.Button.SecondaryThumbstick) || Input.GetKeyDown(KeyCode.O))
+        if (OVRInput.GetDown(OVRInput.Button.PrimaryHandTrigger) || OVRInput.GetDown(OVRInput.Button.SecondaryHandTrigger) || Input.GetKeyDown(KeyCode.O))
         {
             if (bulletTime)
             {
