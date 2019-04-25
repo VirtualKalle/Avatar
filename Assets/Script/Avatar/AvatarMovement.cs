@@ -11,19 +11,91 @@ public class AvatarMovement : MonoBehaviour
     Vector2 moveInput;
     float rotate;
     private bool moveKey;
+    Vector3 destination;
+    [SerializeField] GameObject destinationPointer;
+    private Vector3 distance;
+    Rigidbody rb;
+    private float meanTimeLeft;
+    private Vector3 currentVelocity;
+    private float currentVelocityMag;
+    private Vector3 lastPos;
+    private float meanTimeInterval;
+    private bool autoMove;
 
     // Use this for initialization
     void Start()
     {
-
+        rb = GetComponent<Rigidbody>();
     }
 
     // Update is called once per frame
     void Update()
     {
+        GetInput();
         Move();
         //Twist();
         Rotate();
+        AutoMoveToDestination();
+        MeanVelocity();
+        UpdateAnimation(); 
+
+        if ((OVRInput.GetDown(OVRInput.Button.PrimaryThumbstick) || OVRInput.GetDown(OVRInput.Button.SecondaryThumbstick)) && destinationPointer.activeSelf)
+        {
+            SetNewDestination(destinationPointer.transform.position);
+        }
+    }
+
+    void SetNewDestination(Vector3 pos)
+    {
+        destination = pos;
+        autoMove = true;
+    }
+
+    void AutoMoveToDestination()
+    {
+        distance = destination - transform.position;
+
+        if (distance.magnitude > 0.01f && autoMove)
+        {
+            transform.Translate(distance.normalized * Time.deltaTime, Space.World);
+        }
+        else
+        {
+            autoMove = false;
+        }
+    }
+
+    void MeanVelocity()
+    {
+        meanTimeLeft -= Time.deltaTime;
+
+        if (meanTimeLeft < 0)
+        {
+            currentVelocity = (transform.position - lastPos) / Time.deltaTime;
+
+            currentVelocityMag = currentVelocity.magnitude;
+            //Debug.Log("currentVelocity " + currentVelocity + "\n currentVelocityMag " + currentVelocity.magnitude);
+            lastPos = transform.position;
+
+            meanTimeLeft = meanTimeInterval;
+        }
+
+        move.x = transform.InverseTransformDirection(currentVelocity).normalized.x;
+        move.y = transform.InverseTransformDirection(currentVelocity).normalized.z;
+
+    }
+    void UpdateAnimation()
+    {
+        m_animator.SetFloat("MoveFwd", move.y);
+        m_animator.SetFloat("MoveRight", move.x);
+        if (move.magnitude > 0.01)
+        {
+            m_animator.SetBool("Moving", true);
+        }
+        else if (m_animator.GetBool("Moving"))
+        {
+            m_animator.SetBool("Moving", false);
+        }
     }
 
     void GetInput()
@@ -32,12 +104,14 @@ public class AvatarMovement : MonoBehaviour
         if (OVRInput.Get(OVRInput.RawAxis2D.RThumbstick).magnitude > 0.1)
         {
             move = OVRInput.Get(OVRInput.RawAxis2D.RThumbstick);
+
+            autoMove = false;
         }
         else
         {
             if (moveKey)
             {
-            moveKey = false;
+                moveKey = false;
             }
 
             if (Input.GetKey(KeyCode.W))
@@ -106,7 +180,7 @@ public class AvatarMovement : MonoBehaviour
 
     private void Move()
     {
-        GetInput();
+
 
         if (OVRInput.Get(OVRInput.RawAxis2D.RThumbstick).magnitude > 0.1f || moveKey)
         {
@@ -120,37 +194,30 @@ public class AvatarMovement : MonoBehaviour
             transform.Translate(-move.x * right * Time.deltaTime, Space.World);
         }
 
-        m_animator.SetFloat("MoveFwd", move.y);
-        m_animator.SetFloat("MoveRight", move.x);
-        if (move.magnitude > 0.01)
-        {
-            m_animator.SetBool("Moving", true);
-        }
-        else if (m_animator.GetBool("Moving"))
-        {
-            m_animator.SetBool("Moving", false);
-        }
 
     }
 
     void Rotate()
     {
+        Camera camera = Camera.main;
+        Vector3 direction = Vector3.ProjectOnPlane(transform.position - camera.transform.position, new Vector3(0, 1, 0));
 
+        transform.Rotate(new Vector3(0, 1, 0), Vector3.SignedAngle(transform.forward, direction, new Vector3(0, 1, 0)), Space.World);
 
-        if (rotate > 0.1f && !rotated)
-        {
-            transform.Rotate(Vector3.up, 90);
-            rotated = true;
-        }
-        else if (rotate < -0.1f && !rotated)
-        {
-            transform.Rotate(Vector3.up, -90);
-            rotated = true;
-        }
-        else if (rotate > -0.1f && rotate < 0.1f && rotated)
-        {
-            rotated = false;
-        }
+        //if (rotate > 0.1f && !rotated)
+        //{
+        //    transform.Rotate(Vector3.up, 30);
+        //    rotated = true;
+        //}
+        //else if (rotate < -0.1f && !rotated)
+        //{
+        //    transform.Rotate(Vector3.up, -30);
+        //    rotated = true;
+        //}
+        //else if (rotate > -0.1f && rotate < 0.1f && rotated)
+        //{
+        //    rotated = false;
+        //}
 
     }
 

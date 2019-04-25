@@ -13,16 +13,17 @@ public class LookAtPoint : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 
-        //MoveToPoint();
+        MoveToPoint();
 
     }
 
     void MoveToPoint()
     {
         RaycastHit hit;
-        Physics.Raycast(mainCamera.transform.position, mainCamera.transform.forward, out hit, 100);
-        transform.position = hit.point;
-    }
+        if(Physics.Raycast(mainCamera.transform.position, mainCamera.transform.forward, out hit, 100))
+            transform.position = hit.point;
 
+    }
+    
 }
 

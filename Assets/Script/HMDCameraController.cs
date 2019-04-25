@@ -7,7 +7,7 @@ public class HMDCameraController : MonoBehaviour {
     private bool rotated;
     [SerializeField] Transform avatar;
     Vector3 Threshold = new Vector3(1,1,1);
-    float rotateThreshold = 0.1f;
+    float rotateThreshold = 0.5f;
 
     // Use this for initialization
     void Start () {
@@ -50,19 +50,25 @@ public class HMDCameraController : MonoBehaviour {
     {
 
         float h1 = OVRInput.Get(OVRInput.RawAxis2D.LThumbstick).x; // set as your inputs 
+        float v1 = OVRInput.Get(OVRInput.RawAxis2D.LThumbstick).y; // set as your inputs 
 
         if ((h1 > rotateThreshold || Input.GetKey(KeyCode.E)) && !rotated) //Rotate right
         {
-            transform.RotateAround(avatar.position, Vector3.up, 90);
+            transform.RotateAround(avatar.position, Vector3.up, 30);
             rotated = true;
         }
         else if ((h1 < -rotateThreshold || Input.GetKey(KeyCode.Q)) && !rotated)
         {
             //transform.Rotate(Vector3.up, -90);
-            transform.RotateAround(avatar.position, Vector3.up, -90);
+            transform.RotateAround(avatar.position, Vector3.up, -30);
             rotated = true;
         }
-        else if (h1 > -rotateThreshold && h1 < rotateThreshold && !Input.GetKey(KeyCode.E) && !Input.GetKey(KeyCode.Q) && rotated)
+        else if ((v1 < -rotateThreshold || Input.GetKey(KeyCode.Q)) && !rotated)
+        {
+            transform.RotateAround(avatar.position, Vector3.up, 180);
+            rotated = true;
+        }
+        else if (h1 > -rotateThreshold && h1 < rotateThreshold && v1 > -rotateThreshold && !Input.GetKey(KeyCode.E) && !Input.GetKey(KeyCode.Q) && rotated)
         {
             rotated = false;
         }

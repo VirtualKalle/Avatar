@@ -15,7 +15,8 @@ public class AvatarManager : MonoBehaviour
 
 
     [SerializeField] Transform head;
-    
+    [SerializeField] Transform headRig;
+
     //[SerializeField] Transform body;
     //Vector3 bodyRelativePosition;
     //Quaternion bodyRelativeRotation;
@@ -45,19 +46,30 @@ public class AvatarManager : MonoBehaviour
 
     void FollowTransform()
     {
-        //headAvatar.localPosition = head.localPosition;
+        Camera camera = Camera.main;
+        Vector3 direction = Vector3.ProjectOnPlane(headAvatar.transform.position - camera.transform.position, new Vector3(0, 1, 0));
+
         headAvatar.localRotation = head.localRotation;
+
+        headRig.localRotation = headAvatar.localRotation;
 
         bodyAvatar.localPosition = headAvatar.localPosition + new Vector3(0, -1f, 0);
 
-        //handRightAvatar.localPosition = handRight.position - head.position + headAvatar.localPosition;
         handRightAvatar.position = headAvatar.TransformPoint(head.transform.InverseTransformPoint(handRight.position));
+        handRightAvatar.RotateAround(headAvatar.position, new Vector3(0, 1, 0), -Vector3.SignedAngle(new Vector3(0, 0, 1), direction, new Vector3(0, 1, 0)));
+
 
         handRightAvatar.localRotation = handRight.localRotation;
+        handRightAvatar.RotateAround(handRightAvatar.position, new Vector3(0, 1, 0), -Vector3.SignedAngle(new Vector3(0, 0, 1), direction, new Vector3(0, 1, 0)));
+
 
         handLeftAvatar.position = headAvatar.TransformPoint(head.transform.InverseTransformPoint(handLeft.position));
+        handLeftAvatar.RotateAround(headAvatar.position, new Vector3(0, 1, 0), -Vector3.SignedAngle(new Vector3(0, 0, 1), direction, new Vector3(0, 1, 0)));
+
+
         handLeftAvatar.localRotation = handLeft.localRotation;
+        handLeftAvatar.RotateAround(handLeftAvatar.position, new Vector3(0, 1, 0), -Vector3.SignedAngle(new Vector3(0, 0, 1), direction, new Vector3(0, 1, 0)));
+
     }
-
-
+       
 }
