@@ -24,14 +24,14 @@ public class WarpManager : MonoBehaviour
 
     private void OnEnable()
     {
-        GameManager.BulletTime += EnableGhostObject;
-        GameManager.RealTime += StopRecording;
+        AvatarGameManager.bulletTimeEvent += EnableGhostObject;
+        AvatarGameManager.realTimeEvent += StopRecording;
     }
 
     private void OnDisable()
     {
-        GameManager.BulletTime -= EnableGhostObject;
-        GameManager.RealTime -= StopRecording;
+        AvatarGameManager.bulletTimeEvent -= EnableGhostObject;
+        AvatarGameManager.realTimeEvent -= StopRecording;
     }
 
     // Use this for initialization
@@ -53,7 +53,7 @@ public class WarpManager : MonoBehaviour
     void Update()
     {
 
-        if (GameManager.bulletTime)
+        if (AvatarGameManager.bulletTime)
         {
             RecordCountDown();
             SpawnTrail();
@@ -153,7 +153,7 @@ public class WarpManager : MonoBehaviour
 
     public TransformRecording GetNextTargetTransform()
     {
-        if (transformRecordings.Count == 0 && !GameManager.bulletTime)
+        if (transformRecordings.Count == 0 && !AvatarGameManager.bulletTime)
         {
             DisableGhostObject();
 

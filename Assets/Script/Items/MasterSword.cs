@@ -14,12 +14,12 @@ public class MasterSword : MonoBehaviour
     private bool activeSword;
     private Vector3 lastPos;
     private Vector3 currentVelocity;
-    private Vector3 lastBladePos;
-    private Vector3 currentBladeWorldVelocity;
+    private Vector3 lastBladeSliceDirection;
+    private Vector3 currentBladeSliceDirection;
     private float currentVelocityMag;
     private float meanTimeLeft = 0.1f;
     private float meanTimeInterval = 0.05f;
-    private float swordStartThreshold = 10f;
+    private float swordStartThreshold = 2f;
     private float swordStopThreshold = 0.5f;
     private float spawnTrailTimeLeft;
     private float spawnTrailInterval = 0.02f;
@@ -27,7 +27,11 @@ public class MasterSword : MonoBehaviour
     GameObject trailObjectClone;
     Transform Avatar;
     private float maxForce = 1000;
+    private float minForce = 100;
     [SerializeField] float scaleFactor = 1;
+
+    [SerializeField] AudioClip swooshAudioClip;
+    AudioSource m_audioSorce;
 
     // Use this for initialization
     void Start()
@@ -39,6 +43,7 @@ public class MasterSword : MonoBehaviour
         m_item = GetComponent<Item>();
         Avatar = FindObjectOfType<AvatarManager>().transform;
         BladeRenderer = blade.GetComponent<Renderer>();
+        m_audioSorce = GetComponent<AudioSource>();
     }
 
     // Update is called once per frame
@@ -51,7 +56,6 @@ public class MasterSword : MonoBehaviour
             if (activeSword)
             {
                 SpawnTrail();
-
             }
         }
 
@@ -64,33 +68,39 @@ public class MasterSword : MonoBehaviour
         if (enemyHealth != null)
         {
             //Vector3 force = currentVelocity * 50;
-            Vector3 force = transform.forward * 50;
-            int damage = (int)currentVelocity.magnitude;
+            Vector3 force = transform.forward * 100;
+            int damage = (int)currentVelocity.magnitude * 3;
+
+            damage = damage > 100 ? 100 : damage;
+            damage = damage < 100 ? 100 : damage;
+
             force = force.magnitude > maxForce ? force.normalized * maxForce : force;
+            force = force.magnitude < minForce ? force.normalized * minForce : force;
             enemyHealth.TakeDamage(damage, force);
         }
 
         MeshSlicer meshSlicer = other.GetComponentInParent<MeshSlicer>();
-        if (meshSlicer != null && activeSword)
+        if (meshSlicer != null && activeSword && enemyHealth.currentHealth <= 0)
         {
-            meshSlicer.TryCut(transform.position, Vector3.Cross(transform.forward, currentBladeWorldVelocity.normalized));
+            meshSlicer.TryCut(transform.position, Vector3.Cross(transform.forward, currentBladeSliceDirection.normalized));
         }
     }
 
     void MeanVelocity()
     {
-        meanTimeLeft -= Time.deltaTime;
+        meanTimeLeft -= Time.unscaledDeltaTime;
 
         if (meanTimeLeft < 0)
         {
-            currentVelocity = (transform.position - Avatar.position - lastPos) / Time.deltaTime;
+            //currentVelocity = (transform.position - Avatar.position - lastPos) / Time.unscaledDeltaTime;
+            currentVelocity = (Avatar.InverseTransformPoint(transform.position) - lastPos) / Time.unscaledDeltaTime;
 
             currentVelocityMag = currentVelocity.magnitude;
             //Debug.Log("currentVelocity " + currentVelocity + "\n currentVelocityMag " + currentVelocity.magnitude);
-            lastPos = transform.position - Avatar.position;
+            lastPos = Avatar.InverseTransformPoint(transform.position);
 
-            currentBladeWorldVelocity = (blade.transform.position - lastBladePos) / Time.deltaTime;
-            lastBladePos = blade.transform.position;
+            currentBladeSliceDirection = (blade.transform.position - lastBladeSliceDirection) / Time.unscaledDeltaTime;
+            lastBladeSliceDirection = blade.transform.position;
 
             meanTimeLeft = meanTimeInterval;
         }
@@ -105,6 +115,15 @@ public class MasterSword : MonoBehaviour
             BladeRenderer.material = red;
             bladeCollider.enabled = true;
             activeSword = true;
+            m_audioSorce.PlayOneShot(swooshAudioClip);
+            if (AvatarGameManager.bulletTime)
+            {
+                m_audioSorce.pitch = 0.5f;
+            }
+            else
+            {
+                m_audioSorce.pitch = 1f;
+            }
         }
         else if (currentVelocityMag < swordStopThreshold && activeSword || m_item.m_itemState != ItemState.unholstered)
         {

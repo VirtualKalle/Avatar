@@ -33,57 +33,54 @@ public class GunManager : MonoBehaviour
     private float shootCoolDownTime = 1f;
     private bool hasShot;
     float shootThreshold = 0.5f;
+    [SerializeField] AudioClip gunShotAudioClip;
+    AudioSource m_audioSorce;
 
     // Use this for initialization
     void Start()
     {
         item = GetComponent<Item>();
+        m_audioSorce = GetComponent<AudioSource>();
     }
 
     void OnTriggerShoot()
     {
-        if (/*isGrabbed*/true)
+        //Debug.Log("OnTriggerShoot Start");
+        if (item.m_hand == Hand.Left && OVRInput.Get(OVRInput.Axis1D.PrimaryIndexTrigger, OVRInput.Controller.LTouch) > shootThreshold && !hasShot)
         {
-            //Debug.Log("OnTriggerShoot Start");
-            if (item.m_hand == Hand.Left && OVRInput.Get(OVRInput.Axis1D.PrimaryIndexTrigger, OVRInput.Controller.LTouch) > shootThreshold && !hasShot)
-            {
-                //Debug.Log("Shoot left");
-                TryShoot();
-            }
-            else if (item.m_hand == Hand.Right && OVRInput.Get(OVRInput.Axis1D.PrimaryIndexTrigger, OVRInput.Controller.RTouch) > shootThreshold && !hasShot)
-            {
-                //Debug.Log("Shoot right");
-                TryShoot();
-            }
-            else if (
-                    (item.m_hand == Hand.Left && OVRInput.Get(OVRInput.Axis1D.PrimaryIndexTrigger, OVRInput.Controller.LTouch) < shootThreshold || 
-                    item.m_hand == Hand.Right && OVRInput.Get(OVRInput.Axis1D.PrimaryIndexTrigger, OVRInput.Controller.RTouch) < shootThreshold) &&
-                    hasShot)
-            {
-                hasShot = false;
-            }
-            //Debug.Log("OnTriggerShoot End");
+            //Debug.Log("Shoot left");
+            TryShoot();
         }
+        else if (item.m_hand == Hand.Right && OVRInput.Get(OVRInput.Axis1D.PrimaryIndexTrigger, OVRInput.Controller.RTouch) > shootThreshold && !hasShot)
+        {
+            //Debug.Log("Shoot right");
+            TryShoot();
+        }
+        else if (
+                (item.m_hand == Hand.Left && OVRInput.Get(OVRInput.Axis1D.PrimaryIndexTrigger, OVRInput.Controller.LTouch) < shootThreshold ||
+                item.m_hand == Hand.Right && OVRInput.Get(OVRInput.Axis1D.PrimaryIndexTrigger, OVRInput.Controller.RTouch) < shootThreshold) &&
+                hasShot)
+        {
+            hasShot = false;
+        }
+        //Debug.Log("OnTriggerShoot End");
     }
-    
+
     void TryShoot()
     {
-        //if (shootCoolDownTimeLeft <= 0)
-        //{
-        //    if (GameManager.bulletTime)
-        //    {
-        //        m_warpManager.QueueAction();
-        //        Shoot(muzzle.transform.position, muzzle.transform.rotation);
-        //    }
-        //    else
-        //    {
-        //    Shoot(muzzle.transform.position, muzzle.transform.rotation);
-        //    }
-        //    shootCoolDownTimeLeft = shootCoolDownTime;
-        //}
         if (!hasShot)
         {
             Shoot(muzzle.transform.position, muzzle.transform.rotation);
+            
+            m_audioSorce.PlayOneShot(gunShotAudioClip);
+            if (AvatarGameManager.bulletTime)
+            {
+                m_audioSorce.pitch = 0.5f;
+            }
+            else
+            {
+                m_audioSorce.pitch = 1f;
+            }
             hasShot = true;
         }
     }
@@ -91,6 +88,7 @@ public class GunManager : MonoBehaviour
     public void Shoot(Vector3 pos, Quaternion rot)
     {
         GameObject bulletClone = Instantiate(bullet, pos, rot);
+        bulletClone.transform.localScale *= transform.lossyScale.magnitude;
     }
 
     // Update is called once per frame
@@ -99,8 +97,7 @@ public class GunManager : MonoBehaviour
 
         if (item.m_itemState == ItemState.unholstered)
         {
-        //CheckGrab();
-        OnTriggerShoot();
+            OnTriggerShoot();
         }
 
         ShootCountDown();
@@ -113,5 +110,5 @@ public class GunManager : MonoBehaviour
             shootCoolDownTimeLeft -= Time.unscaledDeltaTime;
         }
     }
-       
+
 }
