@@ -19,7 +19,18 @@ public class EnemyMovement : MonoBehaviour
 
         nav = GetComponent<NavMeshAgent>();
     }
+    private void Start()
+    {
+        ScaleNav();
+    }
 
+    void ScaleNav()
+    {
+        nav.acceleration *= AvatarGameManager.worldScale;
+        nav.speed *= AvatarGameManager.worldScale;
+        nav.stoppingDistance *= AvatarGameManager.worldScale;
+        
+    }
 
     void Update()
     {

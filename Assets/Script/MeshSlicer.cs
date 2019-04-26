@@ -418,7 +418,7 @@ public class MeshSlicer : MonoBehaviour
         go.AddComponent<MeshFilter>().mesh = mesh;
         go.AddComponent<MeshRenderer>().material = cutMaterial;
         MeshCollider meshCollider = go.AddComponent<MeshCollider>();
-        meshCollider.cookingOptions = MeshColliderCookingOptions.None;
+        meshCollider.cookingOptions = MeshColliderCookingOptions.InflateConvexMesh;
         meshCollider.sharedMesh = mesh;
         meshCollider.convex = true;
 
