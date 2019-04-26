@@ -7,13 +7,15 @@ public class BulletManager : MonoBehaviour
 
     [SerializeField] Rigidbody rb;
     [SerializeField] float velocity = 10f;
+    [SerializeField] Material neutralMaterial;
     private bool neutralized;
+
 
 
     // Use this for initialization
     void Start()
     {
-        rb.velocity = transform.forward * velocity;
+        rb.velocity = transform.forward * velocity * AvatarGameManager.worldScale;
     }
 
     private void OnCollisionEnter(Collision collision)
@@ -23,26 +25,26 @@ public class BulletManager : MonoBehaviour
             return;
         }
 
-        EnemyHealth enemyHealth = collision.transform.parent.GetComponent<EnemyHealth>();
-
-        if (enemyHealth)
+        EnemyHealth enemyHealth;
+        if (collision.gameObject.CompareTag("Enemy"))
         {
+            enemyHealth = collision.transform.parent.GetComponent<EnemyHealth>();
             enemyHealth.TakeDamage(10, (enemyHealth.transform.position - transform.position).normalized * 1000);
-        }
 
-        MeshSlicer meshSlicer = collision.gameObject.GetComponentInParent<MeshSlicer>();
-        if (meshSlicer != null && enemyHealth.currentHealth <= 0)
-        {
+            MeshSlicer meshSlicer = collision.gameObject.GetComponentInParent<MeshSlicer>();
+            if (meshSlicer != null && enemyHealth.currentHealth <= 0)
+            {
 
-            List<Vector3> cutPlanes = new List<Vector3>();
+                List<Vector3> cutPlanes = new List<Vector3>();
 
-            cutPlanes.Add(transform.TransformDirection(new Vector3(1, Random.Range(-0.2f, 0.2f), 0)));
-            cutPlanes.Add(transform.TransformDirection(new Vector3(1, Random.Range(-1f, 1f), Random.Range(-0.2f, 0.2f))));
-            cutPlanes.Add(transform.TransformDirection(new Vector3(Random.Range(-0.2f, 0.2f), 1, 0)));
+                cutPlanes.Add(transform.TransformDirection(new Vector3(1, Random.Range(-0.2f, 0.2f), 0)));
+                cutPlanes.Add(transform.TransformDirection(new Vector3(1, Random.Range(-1f, 1f), Random.Range(-0.2f, 0.2f))));
+                cutPlanes.Add(transform.TransformDirection(new Vector3(Random.Range(-0.2f, 0.2f), 1, 0)));
 
 
-            meshSlicer.TryCut(transform.position, cutPlanes);
+                meshSlicer.TryCut(transform.position, cutPlanes);
 
+            }
         }
         End();
     }
@@ -50,6 +52,7 @@ public class BulletManager : MonoBehaviour
     void End()
     {
         neutralized = true;
+        GetComponent<Renderer>().material = neutralMaterial;
         Destroy(gameObject, 2);
     }
 

@@ -6,7 +6,7 @@ public enum ItemState { holstered, unholstered, holstering, unholstering }
 
 public class Item : MonoBehaviour
 {
-
+    
     Coroutine HolsterCo;
     [SerializeField] Transform holsterParent;
     [SerializeField] Transform hand;
@@ -15,7 +15,8 @@ public class Item : MonoBehaviour
 
     //Void variant
     Transform target;
-    private float distance;
+    private float relativeStartDistance;
+    Vector3 stepVector;
 
     private void Start()
     {
@@ -31,8 +32,7 @@ public class Item : MonoBehaviour
         if (m_itemState == ItemState.unholstered)
         {
             target = holsterParent;
-            distance = (target.position - transform.position).magnitude;
-            transform.parent = null;
+            transform.parent = transform.root;
             m_itemState = ItemState.holstering;
         }
     }
@@ -43,8 +43,7 @@ public class Item : MonoBehaviour
         if (m_itemState == ItemState.holstered)
         {
             target = hand;
-            distance = (target.position - transform.position).magnitude;
-            transform.parent = null;
+            transform.parent = transform.root;
             m_itemState = ItemState.unholstering;
         }
     }
@@ -59,25 +58,26 @@ public class Item : MonoBehaviour
 
     void MoveToPosition()
     {
-
-        if ((target.position - transform.position).magnitude > 0.01 * transform.localScale.magnitude)
+        stepVector = (target.position - transform.position).normalized * Time.unscaledDeltaTime * AvatarGameManager.worldScale;
+        if ((target.position - transform.position).magnitude > 0.01 )
         {
+            relativeStartDistance = (target.position - transform.position).magnitude / AvatarGameManager.worldScale;
 
-            if ((target.position - transform.position).magnitude > 0.1 * distance)
+            if (relativeStartDistance > 0.1 && (target.position - transform.position).magnitude > stepVector.magnitude)
             {
-                transform.Translate((target.position - transform.position) * 30 * distance * Time.deltaTime, Space.World);
+                transform.Translate(stepVector, Space.World);
                 transform.Rotate((-360 * 4) * Time.deltaTime, 0, 0);
                 //Debug.Log("Translate distance left" + (target.position - transform.position).magnitude + "of " + transform.name);
             }
             else
             {
-                transform.position = Vector3.Lerp(transform.position, target.position, Time.deltaTime * distance * 100);
-                transform.rotation = Quaternion.Lerp(transform.rotation, target.rotation, Time.deltaTime * 20);
+                transform.position = Vector3.Lerp(transform.position, target.position, Time.unscaledDeltaTime * 30);
+                transform.rotation = Quaternion.Lerp(transform.rotation, target.rotation, Time.unscaledDeltaTime * 20);
                 //Debug.Log("Lerp distance left " + (target.position - transform.position).magnitude + "of " + transform.name);
             }
 
         }
-        else if(transform.parent == null)
+        else if(transform.parent == transform.root)
         {
         transform.position = target.position;
         transform.parent = target;

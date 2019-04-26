@@ -23,7 +23,6 @@ public class GunManager : MonoBehaviour
 
     Item item;
     public float shootCoolDownTimeLeft { get; private set; }
-    public WarpManager m_warpManager;
 
     [SerializeField] GameObject bullet;
     [SerializeField] GameObject muzzle;

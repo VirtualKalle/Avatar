@@ -44,7 +44,6 @@ public class WarpManager : MonoBehaviour
         m_ghostManager = ghostObject.GetComponent<GhostManager>();
         m_ghostManager.m_warpManager = this;
         m_ghostManager.m_gunManager = m_gunManager;
-        m_gunManager.m_warpManager = this;
         m_ghostManager.liveTargetTransform = transform;
         InitiateRecording();
     }
@@ -56,7 +55,7 @@ public class WarpManager : MonoBehaviour
         if (AvatarGameManager.bulletTime)
         {
             RecordCountDown();
-            SpawnTrail();
+            //SpawnTrail();
         }
     }
 
@@ -144,7 +143,7 @@ public class WarpManager : MonoBehaviour
         spawnTrailTimeLeft -= Time.unscaledDeltaTime;
         if (spawnTrailTimeLeft < 0)
         {
-            GameObject trailObjectClone = Instantiate(trailObject, transform.position, transform.rotation);
+            GameObject trailObjectClone = Instantiate(trailObject, transform.position, transform.rotation, transform.root);
             Destroy(trailObjectClone, 0.1f);
             spawnTrailTimeLeft = spawnTrailInterval;
         }

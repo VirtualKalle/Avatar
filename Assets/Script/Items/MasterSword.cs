@@ -64,9 +64,9 @@ public class MasterSword : MonoBehaviour
     private void OnTriggerEnter(Collider other)
     {
         //Debug.Log("Swiftblade trigger enter " + other.transform.name);
-        EnemyHealth enemyHealth = other.GetComponentInParent<EnemyHealth>();
-        if (enemyHealth != null)
+        if (other.gameObject.CompareTag("Enemy"))
         {
+            EnemyHealth enemyHealth = other.GetComponentInParent<EnemyHealth>();
             //Vector3 force = currentVelocity * 50;
             Vector3 force = transform.forward * 100;
             int damage = (int)currentVelocity.magnitude * 3;
@@ -77,12 +77,12 @@ public class MasterSword : MonoBehaviour
             force = force.magnitude > maxForce ? force.normalized * maxForce : force;
             force = force.magnitude < minForce ? force.normalized * minForce : force;
             enemyHealth.TakeDamage(damage, force);
-        }
 
-        MeshSlicer meshSlicer = other.GetComponentInParent<MeshSlicer>();
-        if (meshSlicer != null && activeSword && enemyHealth.currentHealth <= 0)
-        {
-            meshSlicer.TryCut(transform.position, Vector3.Cross(transform.forward, currentBladeSliceDirection.normalized));
+            MeshSlicer meshSlicer = other.GetComponentInParent<MeshSlicer>();
+            if (meshSlicer != null && activeSword && enemyHealth.currentHealth <= 0)
+            {
+                meshSlicer.TryCut(transform.position, Vector3.Cross(transform.forward, currentBladeSliceDirection.normalized));
+            }
         }
     }
 
