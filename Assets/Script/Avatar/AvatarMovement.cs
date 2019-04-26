@@ -21,6 +21,9 @@ public class AvatarMovement : MonoBehaviour
     private Vector3 lastPos;
     private float meanTimeInterval;
     private bool autoMove;
+    private bool startedMoving;
+
+    Vector3 fwd;
 
     // Use this for initialization
     void Start()
@@ -37,7 +40,7 @@ public class AvatarMovement : MonoBehaviour
         Rotate();
         AutoMoveToDestination();
         MeanVelocity();
-        UpdateAnimation(); 
+        UpdateAnimation();
 
         if ((OVRInput.GetDown(OVRInput.Button.PrimaryThumbstick) || OVRInput.GetDown(OVRInput.Button.SecondaryThumbstick)) && destinationPointer.activeSelf)
         {
@@ -181,17 +184,28 @@ public class AvatarMovement : MonoBehaviour
     private void Move()
     {
 
-
         if (OVRInput.Get(OVRInput.RawAxis2D.RThumbstick).magnitude > 0.1f || moveKey)
         {
-            Debug.Log("Input " + move);
+            //Debug.Log("Input " + move);
+            if (!startedMoving)
+            {
+                fwd = Vector3.ProjectOnPlane((transform.position - Camera.main.transform.position), Vector3.up).normalized;
+                startedMoving = true;
+            }
 
-            Vector3 fwd = Vector3.ProjectOnPlane((transform.position - Camera.main.transform.position), Vector3.up).normalized;
-            transform.Translate(move.y * fwd * Time.deltaTime, Space.World);
+            transform.Translate(move.y * fwd * AvatarGameManager.worldScale * Time.deltaTime, Space.World);
+            //transform.localPosition += move.y * fwd * Time.deltaTime;
 
+            //Vector3 right = Vector3.Cross((transform.position - Camera.main.transform.position), Vector3.up).normalized;
+            //transform.Translate(-move.x * right * Time.deltaTime, Space.World);
 
             Vector3 right = Vector3.Cross((transform.position - Camera.main.transform.position), Vector3.up).normalized;
-            transform.Translate(-move.x * right * Time.deltaTime, Space.World);
+            transform.Translate(-move.x * right * AvatarGameManager.worldScale * Time.deltaTime, Space.World);
+
+        }
+        else if (OVRInput.Get(OVRInput.RawAxis2D.RThumbstick).magnitude < 0.1f && !moveKey && startedMoving)
+        {
+            startedMoving = false;
         }
 
 

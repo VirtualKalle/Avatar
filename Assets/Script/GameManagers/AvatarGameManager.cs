@@ -9,9 +9,12 @@ public class AvatarGameManager : MonoBehaviour {
     public static bool bulletTime;
     public static float timeDivisor = 10f;
     public static float timeScaler;
+    public static float worldScale;
+
 
     [SerializeField] Text time;
     [SerializeField] Text unscaledTime;
+    public GameObject gameSpace;
 
     public delegate void GameManagerDelegate();
     public static GameManagerDelegate bulletTimeEvent;
@@ -19,9 +22,14 @@ public class AvatarGameManager : MonoBehaviour {
 
 
     // Use this for initialization
-    void Start () {
-        timeScaler = 1/timeDivisor;
+    private void Awake()
+    {
+        timeScaler = 1 / timeDivisor;
+        worldScale = gameSpace.transform.lossyScale.magnitude / Mathf.Sqrt(3);
+    }
 
+    void Start () {
+        //Debug.Log("worldScale " + worldScale);
     }
 
     void SetBulletTime()

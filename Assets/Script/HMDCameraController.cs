@@ -16,8 +16,8 @@ public class HMDCameraController : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-        Rotate();
-        Move();
+        //Rotate();
+        //Move();
     }
 
     private void Move()

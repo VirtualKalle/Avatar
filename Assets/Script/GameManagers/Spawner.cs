@@ -43,7 +43,7 @@ public class Spawner : MonoBehaviour {
     void Spawn()
     {
         int idx = Random.Range(0, spawnPoints.Length);
-        Instantiate(enemy, spawnPoints[idx].position, spawnPoints[idx].rotation);
+        Instantiate(enemy, spawnPoints[idx].position, spawnPoints[idx].rotation, transform.root);
         enemycount++;
 
     }
