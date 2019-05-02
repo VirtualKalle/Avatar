@@ -3,22 +3,26 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class AvatarGameManager : MonoBehaviour {
+public class AvatarGameManager : MonoBehaviour
+{
 
-    public static bool DebugMode;
+    public static bool debugMode;
     public static bool bulletTime;
+    public static bool paused;
     public static float timeDivisor = 10f;
     public static float timeScaler;
     public static float worldScale;
+    
 
-
-    [SerializeField] Text time;
-    [SerializeField] Text unscaledTime;
     public GameObject gameSpace;
 
     public delegate void GameManagerDelegate();
     public static GameManagerDelegate bulletTimeEvent;
     public static GameManagerDelegate realTimeEvent;
+    private static float previousTimeScale;
+    [SerializeField] Slider bulletTimeSlider;
+
+    private float bulletTimeLeft;
 
 
     // Use this for initialization
@@ -28,14 +32,13 @@ public class AvatarGameManager : MonoBehaviour {
         worldScale = gameSpace.transform.lossyScale.magnitude / Mathf.Sqrt(3);
     }
 
-    void Start () {
+    void Start()
+    {
         //Debug.Log("worldScale " + worldScale);
     }
 
     void SetBulletTime()
     {
-        //Time.timeScale = 1 / timeDivisor;
-        //Time.fixedDeltaTime = Time.fixedDeltaTime / timeDivisor;
 
         Time.timeScale = 1 * timeScaler;
         Time.fixedDeltaTime = Time.fixedDeltaTime * timeScaler;
@@ -53,11 +56,28 @@ public class AvatarGameManager : MonoBehaviour {
         realTimeEvent();
     }
 
+    public static void Pause()
+    {
+        previousTimeScale = Time.timeScale;
+        Time.timeScale = 0;
+        paused = true;
+    }
+
+    public static void UnPause()
+    {
+        Time.timeScale = previousTimeScale;
+        paused = false;
+    }
+
+
+
+
     // Update is called once per frame
-    void Update () {
+    void Update()
+    {
 
         //if (OVRInput.GetDown(OVRInput.Button.PrimaryThumbstick) || OVRInput.GetDown(OVRInput.Button.SecondaryThumbstick) || Input.GetKeyDown(KeyCode.O))
-        if (OVRInput.GetDown(OVRInput.Button.PrimaryHandTrigger) || OVRInput.GetDown(OVRInput.Button.SecondaryHandTrigger) || Input.GetKeyDown(KeyCode.O))
+        if (OVRInput.GetDown(OVRInput.Button.Two, OVRInput.Controller.RTouch) || Input.GetKeyDown(KeyCode.O))
         {
             if (bulletTime)
             {
@@ -68,5 +88,24 @@ public class AvatarGameManager : MonoBehaviour {
                 SetBulletTime();
             }
         }
-	}
+
+        if (bulletTime)
+        {
+            bulletTimeSlider.value -= Time.unscaledDeltaTime * 0.2f;
+            if (bulletTimeSlider.value <= 0)
+            {
+                SetRealTime();
+            }
+        }
+        else
+        {
+            if (bulletTimeLeft < 1)
+            {
+                bulletTimeSlider.value += Time.unscaledDeltaTime * 0.1f;
+                bulletTimeSlider.value = Mathf.Min(1, bulletTimeSlider.value);
+            }
+
+        }
+
+    }
 }

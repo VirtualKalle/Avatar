@@ -23,7 +23,7 @@ public class Spawner : MonoBehaviour {
     {
 
         //if (!FindObjectOfType<EnemyHealth>())
-        if (FindObjectsOfType<EnemyHealth>().Length < 5)
+        if (FindObjectsOfType<EnemyHealth>().Length < 5 && !AvatarHealth.isDead)
         {
             SpawnCountDown();
         }
