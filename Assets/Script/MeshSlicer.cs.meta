@@ -8,7 +8,7 @@ MonoImporter:
   - Centroid: {fileID: 1681390578461572, guid: eec2aaec4a42d454f8196db1cdb3f1ae, type: 2}
   - SlicePrefab: {fileID: 1256603988826554, guid: ef1066becc180bd4185ebf25b21dde44,
       type: 2}
-  - cutMaterial: {fileID: 2100000, guid: fb4ee835122729245a436955f9671beb, type: 2}
+  - cutMaterial: {fileID: 2100000, guid: 693960aef8379f0459b69454f53186cd, type: 2}
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 

@@ -29,7 +29,7 @@ public class Item : MonoBehaviour
 
     public void Holster()
     {
-        if (m_itemState == ItemState.unholstered)
+        if (m_itemState != ItemState.holstered)
         {
             target = holsterParent;
             transform.parent = transform.root;
@@ -40,7 +40,7 @@ public class Item : MonoBehaviour
 
     public void Unholster()
     {
-        if (m_itemState == ItemState.holstered)
+        if (m_itemState != ItemState.unholstered)
         {
             target = hand;
             transform.parent = transform.root;
@@ -59,19 +59,19 @@ public class Item : MonoBehaviour
     void MoveToPosition()
     {
         stepVector = (target.position - transform.position).normalized * Time.unscaledDeltaTime * AvatarGameManager.worldScale;
-        if ((target.position - transform.position).magnitude > 0.01 )
+        relativeStartDistance = (target.position - transform.position).magnitude / AvatarGameManager.worldScale;
+        if (relativeStartDistance > 0.05 )
         {
-            relativeStartDistance = (target.position - transform.position).magnitude / AvatarGameManager.worldScale;
 
             if (relativeStartDistance > 0.1 && (target.position - transform.position).magnitude > stepVector.magnitude)
             {
-                transform.Translate(stepVector, Space.World);
+                transform.Translate(stepVector * 3, Space.World);
                 transform.Rotate((-360 * 4) * Time.deltaTime, 0, 0);
                 //Debug.Log("Translate distance left" + (target.position - transform.position).magnitude + "of " + transform.name);
             }
             else
             {
-                transform.position = Vector3.Lerp(transform.position, target.position, Time.unscaledDeltaTime * 30);
+                transform.position = Vector3.Lerp(transform.position, target.position, Time.unscaledDeltaTime * 50);
                 transform.rotation = Quaternion.Lerp(transform.rotation, target.rotation, Time.unscaledDeltaTime * 20);
                 //Debug.Log("Lerp distance left " + (target.position - transform.position).magnitude + "of " + transform.name);
             }

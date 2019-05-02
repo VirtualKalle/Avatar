@@ -129,5 +129,5 @@ MonoBehaviour:
   plane: {fileID: 0}
   Centroid: {fileID: 1681390578461572, guid: eec2aaec4a42d454f8196db1cdb3f1ae, type: 2}
   SlicePrefab: {fileID: 1256603988826554}
-  cutMaterial: {fileID: 2100000, guid: fb4ee835122729245a436955f9671beb, type: 2}
+  cutMaterial: {fileID: 2100000, guid: 693960aef8379f0459b69454f53186cd, type: 2}
   isCut: 0

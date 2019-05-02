@@ -28,7 +28,15 @@ public class BulletManager : MonoBehaviour
         EnemyHealth enemyHealth;
         if (collision.gameObject.CompareTag("Enemy"))
         {
-            enemyHealth = collision.transform.parent.GetComponent<EnemyHealth>();
+            if (!collision.transform.parent.GetComponent<EnemyHealth>())
+            {
+                enemyHealth = collision.transform.parent.GetComponentInParent<EnemyHealth>();
+            }
+            else
+            {
+
+                enemyHealth = collision.transform.parent.GetComponent<EnemyHealth>();
+            }
             enemyHealth.TakeDamage(10, (enemyHealth.transform.position - transform.position).normalized * 1000);
 
             MeshSlicer meshSlicer = collision.gameObject.GetComponentInParent<MeshSlicer>();

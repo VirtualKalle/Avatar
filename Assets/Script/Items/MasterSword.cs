@@ -32,6 +32,8 @@ public class MasterSword : MonoBehaviour
 
     [SerializeField] AudioClip swooshAudioClip;
     AudioSource m_audioSorce;
+    private bool isGrown;
+    private float grownScale = 1.5f;
 
     // Use this for initialization
     void Start()
@@ -41,7 +43,7 @@ public class MasterSword : MonoBehaviour
             scaleFactor = 1;
         }
         m_item = GetComponent<Item>();
-        Avatar = FindObjectOfType<AvatarManager>().transform;
+        Avatar = FindObjectOfType<AvatarRig>().transform;
         BladeRenderer = blade.GetComponent<Renderer>();
         m_audioSorce = GetComponent<AudioSource>();
     }
@@ -49,7 +51,7 @@ public class MasterSword : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (m_item.m_itemState != ItemState.holstered)
+        if (m_item.m_itemState != ItemState.holstered && !AvatarGameManager.paused)
         {
             MeanVelocity();
             CheckVelocity();
@@ -59,12 +61,39 @@ public class MasterSword : MonoBehaviour
             }
         }
 
+        if (m_item.m_itemState == ItemState.unholstered)
+        {
+            Grow();
+        }
+        else
+        {
+            Shrink();
+        }
+
+    }
+
+    void Grow()
+    {
+        if (!isGrown)
+        {
+            transform.localScale *= grownScale;
+            isGrown = true;
+        }
+    }
+
+    void Shrink()
+    {
+        if (isGrown)
+        {
+            transform.localScale /= grownScale;
+            isGrown = false;
+        }
     }
 
     private void OnTriggerEnter(Collider other)
     {
         //Debug.Log("Swiftblade trigger enter " + other.transform.name);
-        if (other.gameObject.CompareTag("Enemy"))
+        if (other.gameObject.CompareTag("Enemy") && activeSword)
         {
             EnemyHealth enemyHealth = other.GetComponentInParent<EnemyHealth>();
             //Vector3 force = currentVelocity * 50;
@@ -139,11 +168,11 @@ public class MasterSword : MonoBehaviour
     void SpawnTrail()
     {
         spawnTrailTimeLeft -= Time.unscaledDeltaTime;
-        if (spawnTrailTimeLeft < 0 || (trailObjectClone != null && Vector3.Distance(trailObjectClone.transform.position, transform.position) > 0.05f))
+        if (spawnTrailTimeLeft < 0 || (trailObjectClone != null && Vector3.Distance(trailObjectClone.transform.position, transform.position) > 0.02f))
         {
             trailObjectClone = Instantiate(trailObject, transform.position, transform.rotation);
             trailObjectClone.transform.localScale = transform.lossyScale * scaleFactor;
-            Destroy(trailObjectClone, 0.2f);
+            Destroy(trailObjectClone, 0.1f * Time.timeScale);
             spawnTrailTimeLeft = spawnTrailInterval;
         }
 

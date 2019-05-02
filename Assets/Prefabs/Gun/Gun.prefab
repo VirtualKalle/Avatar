@@ -355,7 +355,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1f39d6ddbf9243e4cbdb16517ce54bb8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_warpManager: {fileID: 0}
   bullet: {fileID: 1072045550216584, guid: 328a6d8213a969741994ca40b58b126f, type: 2}
   muzzle: {fileID: 1259862893200900}
   gunShotAudioClip: {fileID: 0}
@@ -447,7 +446,7 @@ LineRenderer:
   - {x: 0, y: 0, z: 1}
   m_Parameters:
     serializedVersion: 2
-    widthMultiplier: 0.01
+    widthMultiplier: 0.03
     widthCurve:
       serializedVersion: 2
       m_Curve:

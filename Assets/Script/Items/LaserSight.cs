@@ -12,10 +12,7 @@ public class LaserSight : MonoBehaviour
     void Start()
     {
         lr = GetComponent<LineRenderer>();
-        Debug.Log("widthMultiplier " + lr.widthMultiplier + " worldScale " + AvatarGameManager.worldScale);
-
         lr.widthMultiplier *= AvatarGameManager.worldScale;
-        Debug.Log("widthMultiplier " + lr.widthMultiplier);
 
         item = GetComponent<Item>();
     }
