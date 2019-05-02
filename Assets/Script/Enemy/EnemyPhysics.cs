@@ -2,39 +2,49 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class EnemyPhysics : MonoBehaviour {
+public class EnemyPhysics : MonoBehaviour
+{
 
-    [SerializeField] GameObject[] bodyParts;
     EnemyHealth m_enemyHealth;
+    Rigidbody rb;
+    [SerializeField] List<Rigidbody> bodyParts;
 
-
-	// Use this for initialization
-	void Start ()
+    private void Awake()
     {
-        m_enemyHealth = GetComponent<EnemyHealth>();
-        m_enemyHealth.deathEvent += Death;
+        rb = GetComponent<Rigidbody>();
     }
 
-    private void OnDisable()
+    // Use this for initialization
+    void Start()
     {
-        m_enemyHealth.deathEvent -= Death;
+        bodyParts = new List<Rigidbody>(GetComponentsInChildren<Rigidbody>());
+
+        for (int i = 0; i < bodyParts.Count; i++)
+        {
+            if (bodyParts[i].gameObject.GetInstanceID() == gameObject.GetInstanceID())
+            {
+                bodyParts.RemoveAt(i);
+            }
+        }
+
+        
     }
 
-    void Death(Vector3 force)
+
+    public void DeathPhysics(Vector3 force)
     {
-        Destroy(GetComponent<Rigidbody>());
-        foreach (GameObject go in bodyParts)
+        
+
+
+        foreach (Rigidbody go in bodyParts)
         {
             go.GetComponent<Collider>().enabled = true;
-            Rigidbody rb = go.GetComponent<Rigidbody>();
-            rb.isKinematic = false;
-            rb.AddForce(force / 3);
-
+            Rigidbody child_rb = go.GetComponent<Rigidbody>();
+            child_rb.isKinematic = false;
+            child_rb.AddForce(force/3, ForceMode.Force);
         }
+
+        Destroy(rb);
     }
 
-	// Update is called once per frame
-	void Update () {
-		
-	}
 }

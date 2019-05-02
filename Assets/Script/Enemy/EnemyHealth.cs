@@ -11,7 +11,7 @@ public class EnemyHealth : MonoBehaviour
     public AudioClip deathClip;                 // The sound to play when the enemy dies.
     Rigidbody rb;
     MeshSlicer[] m_meshSlicer;
-
+    EnemyPhysics m_EnemyPhysics;
     Animator anim;                              // Reference to the animator.
     AudioSource enemyAudio;                     // Reference to the audio source.
     ParticleSystem hitParticles;                // Reference to the particle system that plays when the enemy is damaged.
@@ -19,7 +19,7 @@ public class EnemyHealth : MonoBehaviour
     bool isDead;                                // Whether the enemy is dead.
     bool isSinking;                             // Whether the enemy has started sinking through the floor.
 
-    public delegate void EnemyDelegate(Vector3 force);
+    public delegate void EnemyDelegate();
     public event EnemyDelegate deathEvent;
     [SerializeField] Slider healthBar;
 
@@ -32,19 +32,10 @@ public class EnemyHealth : MonoBehaviour
         capsuleCollider = GetComponent<Collider>();
         rb = GetComponent<Rigidbody>();
         m_meshSlicer = GetComponentsInChildren<MeshSlicer>();
+        m_EnemyPhysics = GetComponent<EnemyPhysics>();
 
         // Setting the current health when the enemy first spawns.
         currentHealth = startingHealth;
-    }
-
-    private void OnEnable()
-    {
-        deathEvent += Death;
-    }
-
-    private void OnDisable()
-    {
-        deathEvent -= Death;
     }
 
     void Update()
@@ -89,19 +80,22 @@ public class EnemyHealth : MonoBehaviour
         if (currentHealth <= 0)
         {
             // ... the enemy is dead.
-            deathEvent(force);
+            deathEvent();
+            Death();
+            m_EnemyPhysics.DeathPhysics(force);
         }
     }
 
 
-    void Death(Vector3 force)
+    void Death()
     {
         // The enemy is dead.
         isDead = true;
 
         // Turn off health bar.
         healthBar.gameObject.SetActive(false);
-
+        GetComponent<Animator>().enabled = false;
+        //GetComponent<Animator>().SetFloat("PlaySpeed", 0);
 
         // Find the rigidbody component and make it kinematic (since we use Translate to sink the enemy).
         GetComponent<Rigidbody>().isKinematic = true;
