@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class AvatarManager : MonoBehaviour
+public class AvatarRig : MonoBehaviour
 {
 
     [SerializeField] Transform handRightAvatar;
@@ -13,13 +13,8 @@ public class AvatarManager : MonoBehaviour
     [SerializeField] Transform handRight;
     [SerializeField] Transform handLeft;
 
-
     [SerializeField] Transform head;
     [SerializeField] Transform headRig;
-
-    //[SerializeField] Transform body;
-    //Vector3 bodyRelativePosition;
-    //Quaternion bodyRelativeRotation;
 
 
     // Use this for initialization
@@ -41,7 +36,10 @@ public class AvatarManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        FollowTransform();
+        if (!AvatarGameManager.paused && !AvatarHealth.isDead)
+        {
+            FollowTransform();
+        }
     }
 
     void FollowTransform()
@@ -49,7 +47,7 @@ public class AvatarManager : MonoBehaviour
         Camera camera = Camera.main;
         Vector3 direction = Vector3.ProjectOnPlane(headAvatar.transform.position - camera.transform.position, new Vector3(0, 1, 0));
 
-        headAvatar.localRotation = head.localRotation;
+        headAvatar.localRotation = head.rotation;
 
         headRig.localRotation = headAvatar.localRotation;
 
@@ -59,17 +57,14 @@ public class AvatarManager : MonoBehaviour
         handRightAvatar.RotateAround(headAvatar.position, new Vector3(0, 1, 0), -Vector3.SignedAngle(new Vector3(0, 0, 1), direction, new Vector3(0, 1, 0)));
 
 
-        handRightAvatar.localRotation = handRight.localRotation;
-        handRightAvatar.RotateAround(handRightAvatar.position, new Vector3(0, 1, 0), -Vector3.SignedAngle(new Vector3(0, 0, 1), direction, new Vector3(0, 1, 0)));
+        handRightAvatar.rotation = handRight.rotation;
 
 
         handLeftAvatar.position = headAvatar.TransformPoint(head.transform.InverseTransformPoint(handLeft.position));
         handLeftAvatar.RotateAround(headAvatar.position, new Vector3(0, 1, 0), -Vector3.SignedAngle(new Vector3(0, 0, 1), direction, new Vector3(0, 1, 0)));
 
-
-        handLeftAvatar.localRotation = handLeft.localRotation;
-        handLeftAvatar.RotateAround(handLeftAvatar.position, new Vector3(0, 1, 0), -Vector3.SignedAngle(new Vector3(0, 0, 1), direction, new Vector3(0, 1, 0)));
+        handLeftAvatar.rotation = handLeft.rotation;
 
     }
-       
+
 }

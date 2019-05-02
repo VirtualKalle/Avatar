@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI;
 
 public class AvatarMovement : MonoBehaviour
 {
@@ -11,8 +12,8 @@ public class AvatarMovement : MonoBehaviour
     Vector2 moveInput;
     float rotate;
     private bool moveKey;
-    Vector3 destination;
-    [SerializeField] GameObject destinationPointer;
+    Vector2 direction;
+    [SerializeField] Transform destinationPointer;
     private Vector3 distance;
     Rigidbody rb;
     private float meanTimeLeft;
@@ -23,75 +24,134 @@ public class AvatarMovement : MonoBehaviour
     private bool autoMove;
     private bool startedMoving;
 
+    Camera mainCamera;
+
     Vector3 fwd;
+    Vector3 right;
+    [SerializeField] float moveSpeed = 2f;
+    private NavMeshAgent nav;
+    private bool isJumping;
+    [SerializeField] Collider m_Collider;
+    private Vector3 jumpVelocity;
+
+    private void Awake()
+    {
+        mainCamera = Camera.main;
+        rb = GetComponent<Rigidbody>();
+        nav = GetComponent<NavMeshAgent>();
+    }
 
     // Use this for initialization
     void Start()
     {
-        rb = GetComponent<Rigidbody>();
     }
 
     // Update is called once per frame
     void Update()
     {
-        GetInput();
-        Move();
-        //Twist();
-        Rotate();
-        AutoMoveToDestination();
-        MeanVelocity();
-        UpdateAnimation();
-
-        if ((OVRInput.GetDown(OVRInput.Button.PrimaryThumbstick) || OVRInput.GetDown(OVRInput.Button.SecondaryThumbstick)) && destinationPointer.activeSelf)
+        if (!AvatarHealth.isDead)
         {
-            SetNewDestination(destinationPointer.transform.position);
+            GetInput();
+            Move();
+            //Twist();
+            Rotate();
+            AutoMoveToDestination();
+            Velocity();
+            UpdateAnimation();
+            Jump();
+        }
+
+        if (OVRInput.GetDown(OVRInput.Button.PrimaryThumbstick, OVRInput.Controller.LTouch))
+        {
+            autoMove = true;
+            SetNewDestination();
         }
     }
 
-    void SetNewDestination(Vector3 pos)
+
+    void SetNewDestination()
     {
-        destination = pos;
-        autoMove = true;
+        direction = move;
     }
 
     void AutoMoveToDestination()
     {
-        distance = destination - transform.position;
 
-        if (distance.magnitude > 0.01f && autoMove)
+        if (autoMove)
         {
-            transform.Translate(distance.normalized * Time.deltaTime, Space.World);
+            nav.velocity = direction.y * fwd * AvatarGameManager.worldScale * moveSpeed + (-direction.x * right * AvatarGameManager.worldScale * moveSpeed);
         }
-        else
-        {
-            autoMove = false;
-        }
+
     }
 
-    void MeanVelocity()
+    void Velocity()
     {
-        meanTimeLeft -= Time.deltaTime;
 
-        if (meanTimeLeft < 0)
-        {
-            currentVelocity = (transform.position - lastPos) / Time.deltaTime;
+        currentVelocity = (transform.position - lastPos) / Time.deltaTime;
 
-            currentVelocityMag = currentVelocity.magnitude;
-            //Debug.Log("currentVelocity " + currentVelocity + "\n currentVelocityMag " + currentVelocity.magnitude);
-            lastPos = transform.position;
+        currentVelocityMag = currentVelocity.magnitude;
+        //Debug.Log("currentVelocity " + currentVelocity + "\n currentVelocityMag " + currentVelocity.magnitude);
+        lastPos = transform.position;
 
-            meanTimeLeft = meanTimeInterval;
-        }
-
-        move.x = transform.InverseTransformDirection(currentVelocity).normalized.x;
-        move.y = transform.InverseTransformDirection(currentVelocity).normalized.z;
+        meanTimeLeft = meanTimeInterval;
 
     }
+
+
+    private void OnCollisionEnter(Collision collision)
+    {
+    }
+
+    private void OnCollisionExit(Collision collision)
+    {
+    }
+
+    private void OnTriggerEnter(Collider col)
+    {
+        if (col.gameObject.layer == LayerMask.NameToLayer("Floor") && isJumping && rb.velocity.y < 0)
+        {
+
+            isJumping = false;
+            m_Collider.isTrigger = false;
+            nav.enabled = true;
+            rb.isKinematic = true;
+            m_animator.SetBool("Jumping", false);
+
+        }
+    }
+
+
+
+    private void OnTriggerExit(Collider col)
+    {
+        if (col.gameObject.layer == LayerMask.NameToLayer("Floor") && isJumping && rb.velocity.y > 0)
+        {
+            Debug.Log("jumped");
+        }
+    }
+
+    void Jump()
+    {
+        if ((OVRInput.GetDown(OVRInput.Button.One, OVRInput.Controller.RTouch) || Input.GetKeyDown(KeyCode.Space)) && !isJumping)
+        {
+            nav.enabled = false;
+            rb.isKinematic = false;
+            m_Collider.isTrigger = true;
+            isJumping = true;
+            rb.AddForce(Vector3.up * 60, ForceMode.Impulse);
+            m_animator.SetBool("Jumping", true);
+
+
+            jumpVelocity = currentVelocity;
+        }
+    }
+
     void UpdateAnimation()
     {
-        m_animator.SetFloat("MoveFwd", move.y);
-        m_animator.SetFloat("MoveRight", move.x);
-        if (move.magnitude > 0.01)
+        m_animator.SetFloat("MoveFwd", currentVelocity.normalized.z);
+        m_animator.SetFloat("MoveRight", currentVelocity.normalized.x);
+
+        if (currentVelocity.magnitude > 0.01)
         {
             m_animator.SetBool("Moving", true);
         }
@@ -99,16 +159,15 @@ public class AvatarMovement : MonoBehaviour
         {
             m_animator.SetBool("Moving", false);
         }
+
     }
 
     void GetInput()
     {
 
-        if (OVRInput.Get(OVRInput.RawAxis2D.RThumbstick).magnitude > 0.1)
+        if (OVRInput.Get(OVRInput.RawAxis2D.LThumbstick).magnitude > 0.1)
         {
-            move = OVRInput.Get(OVRInput.RawAxis2D.RThumbstick);
-
-            autoMove = false;
+            move = OVRInput.Get(OVRInput.RawAxis2D.LThumbstick);
         }
         else
         {
@@ -184,31 +243,29 @@ public class AvatarMovement : MonoBehaviour
     private void Move()
     {
 
-        if (OVRInput.Get(OVRInput.RawAxis2D.RThumbstick).magnitude > 0.1f || moveKey)
+        if ((OVRInput.Get(OVRInput.RawAxis2D.LThumbstick).magnitude > 0.1f || moveKey))
         {
             //Debug.Log("Input " + move);
             if (!startedMoving)
             {
                 fwd = Vector3.ProjectOnPlane((transform.position - Camera.main.transform.position), Vector3.up).normalized;
+                right = Vector3.Cross((transform.position - Camera.main.transform.position), Vector3.up).normalized;
                 startedMoving = true;
+                autoMove = false;
             }
 
-            transform.Translate(move.y * fwd * AvatarGameManager.worldScale * Time.deltaTime, Space.World);
-            //transform.localPosition += move.y * fwd * Time.deltaTime;
-
-            //Vector3 right = Vector3.Cross((transform.position - Camera.main.transform.position), Vector3.up).normalized;
-            //transform.Translate(-move.x * right * Time.deltaTime, Space.World);
-
-            Vector3 right = Vector3.Cross((transform.position - Camera.main.transform.position), Vector3.up).normalized;
-            transform.Translate(-move.x * right * AvatarGameManager.worldScale * Time.deltaTime, Space.World);
+            nav.velocity = move.y * fwd * AvatarGameManager.worldScale * moveSpeed + (-move.x * right * AvatarGameManager.worldScale * moveSpeed);
 
         }
-        else if (OVRInput.Get(OVRInput.RawAxis2D.RThumbstick).magnitude < 0.1f && !moveKey && startedMoving)
+        else if (OVRInput.Get(OVRInput.RawAxis2D.LThumbstick).magnitude < 0.1f && !moveKey && startedMoving)
         {
             startedMoving = false;
         }
 
-
+        if (isJumping)
+        {
+            transform.Translate(jumpVelocity * Time.deltaTime, Space.World);
+        }
     }
 
     void Rotate()
@@ -217,21 +274,6 @@ public class AvatarMovement : MonoBehaviour
         Vector3 direction = Vector3.ProjectOnPlane(transform.position - camera.transform.position, new Vector3(0, 1, 0));
 
         transform.Rotate(new Vector3(0, 1, 0), Vector3.SignedAngle(transform.forward, direction, new Vector3(0, 1, 0)), Space.World);
-
-        //if (rotate > 0.1f && !rotated)
-        //{
-        //    transform.Rotate(Vector3.up, 30);
-        //    rotated = true;
-        //}
-        //else if (rotate < -0.1f && !rotated)
-        //{
-        //    transform.Rotate(Vector3.up, -30);
-        //    rotated = true;
-        //}
-        //else if (rotate > -0.1f && rotate < 0.1f && rotated)
-        //{
-        //    rotated = false;
-        //}
 
     }
 
