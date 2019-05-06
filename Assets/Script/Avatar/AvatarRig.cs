@@ -47,21 +47,21 @@ public class AvatarRig : MonoBehaviour
         Camera camera = Camera.main;
         Vector3 direction = Vector3.ProjectOnPlane(headAvatar.transform.position - camera.transform.position, new Vector3(0, 1, 0));
 
-        headAvatar.localRotation = head.rotation;
+        headAvatar.rotation = head.rotation;
 
         headRig.localRotation = headAvatar.localRotation;
 
         bodyAvatar.localPosition = headAvatar.localPosition + new Vector3(0, -1f, 0);
 
         handRightAvatar.position = headAvatar.TransformPoint(head.transform.InverseTransformPoint(handRight.position));
-        handRightAvatar.RotateAround(headAvatar.position, new Vector3(0, 1, 0), -Vector3.SignedAngle(new Vector3(0, 0, 1), direction, new Vector3(0, 1, 0)));
+        //handRightAvatar.RotateAround(headAvatar.position, new Vector3(0, 1, 0), -Vector3.SignedAngle(new Vector3(0, 0, 1), direction, new Vector3(0, 1, 0)));
 
 
         handRightAvatar.rotation = handRight.rotation;
 
 
         handLeftAvatar.position = headAvatar.TransformPoint(head.transform.InverseTransformPoint(handLeft.position));
-        handLeftAvatar.RotateAround(headAvatar.position, new Vector3(0, 1, 0), -Vector3.SignedAngle(new Vector3(0, 0, 1), direction, new Vector3(0, 1, 0)));
+        //handLeftAvatar.RotateAround(headAvatar.position, new Vector3(0, 1, 0), -Vector3.SignedAngle(new Vector3(0, 0, 1), direction, new Vector3(0, 1, 0)));
 
         handLeftAvatar.rotation = handLeft.rotation;
 

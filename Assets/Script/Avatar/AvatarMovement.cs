@@ -100,6 +100,7 @@ public class AvatarMovement : MonoBehaviour
 
     private void OnCollisionEnter(Collision collision)
     {
+
     }
 
     private void OnCollisionExit(Collision collision)
@@ -138,7 +139,7 @@ public class AvatarMovement : MonoBehaviour
             rb.isKinematic = false;
             m_Collider.isTrigger = true;
             isJumping = true;
-            rb.AddForce(Vector3.up * 60, ForceMode.Impulse);
+            rb.AddForce(Vector3.up *50, ForceMode.Impulse);
             m_animator.SetBool("Jumping", true);
 
 
