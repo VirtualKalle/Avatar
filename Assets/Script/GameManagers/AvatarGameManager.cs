@@ -89,9 +89,9 @@ public class AvatarGameManager : MonoBehaviour
             }
         }
 
-        if (bulletTime)
+        if (bulletTime && !paused)
         {
-            bulletTimeSlider.value -= Time.unscaledDeltaTime * 0.2f;
+            bulletTimeSlider.value -= Time.unscaledDeltaTime * 0.1f;
             if (bulletTimeSlider.value <= 0)
             {
                 SetRealTime();
@@ -99,9 +99,9 @@ public class AvatarGameManager : MonoBehaviour
         }
         else
         {
-            if (bulletTimeLeft < 1)
+            if (bulletTimeLeft < 1 && !paused)
             {
-                bulletTimeSlider.value += Time.unscaledDeltaTime * 0.1f;
+                bulletTimeSlider.value += Time.unscaledDeltaTime * 0.3f;
                 bulletTimeSlider.value = Mathf.Min(1, bulletTimeSlider.value);
             }
 
