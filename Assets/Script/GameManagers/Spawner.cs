@@ -5,7 +5,7 @@ using UnityEngine;
 public class Spawner : MonoBehaviour {
 
     [SerializeField] Transform spawnPointParent;
-    Transform[] spawnPoints;
+    [SerializeField] Transform[] spawnPoints;
     float spawnTimeLeft = 5;
     float spawnTimeInterval = 5;
 
@@ -14,7 +14,7 @@ public class Spawner : MonoBehaviour {
 
     // Use this for initialization
     void Start () {
-        spawnPoints = spawnPointParent.GetComponentsInChildren<Transform>();
+
 
     }
 	
@@ -25,7 +25,7 @@ public class Spawner : MonoBehaviour {
         //if (!FindObjectOfType<EnemyHealth>())
         if (FindObjectsOfType<EnemyHealth>().Length < 5 && !AvatarHealth.isDead)
         {
-            SpawnCountDown();
+            //SpawnCountDown();
         }
     }
 
@@ -35,14 +35,14 @@ public class Spawner : MonoBehaviour {
 
         if (spawnTimeLeft < 0)
         {
-            Spawn();
+            Spawn(Random.Range(1, spawnPoints.Length));
             spawnTimeLeft = spawnTimeInterval;
         }
     }
 
-    void Spawn()
+    public void Spawn(int idx)
     {
-        int idx = Random.Range(1, spawnPoints.Length);
+        
         Instantiate(enemy, spawnPoints[idx].position, spawnPoints[idx].rotation, transform.root);
         enemycount++;
 
