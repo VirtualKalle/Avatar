@@ -36,15 +36,16 @@ public class LaserSight : MonoBehaviour
 
     void LaserPoint()
     {
-        RaycastHit hit;
-        if (Physics.Raycast(muzzle.position, transform.forward, out hit, 100))
-        {
-            lr.SetPosition(1, hit.point);
-        }
-        else
-        {
-            lr.SetPosition(1, muzzle.position + muzzle.forward * 100);
-        }
+        //RaycastHit hit;
+        //if (Physics.Raycast(muzzle.position, transform.forward, out hit, 100))
+        //{
+        //    lr.SetPosition(1, hit.point);
+        //}
+        //else
+        //{
+        //    lr.SetPosition(1, muzzle.position + muzzle.forward * 100);
+        //}
+        lr.SetPosition(1, muzzle.position + muzzle.forward * 1);
 
 
         lr.SetPosition(0, muzzle.transform.position);

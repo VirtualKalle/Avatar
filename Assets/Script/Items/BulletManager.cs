@@ -7,10 +7,14 @@ public class BulletManager : MonoBehaviour
 
     [SerializeField] Rigidbody rb;
     [SerializeField] float velocity = 10f;
-    [SerializeField] Material neutralMaterial;
     private bool neutralized;
+    TrailRenderer trail;
 
 
+    private void Awake()
+    {
+        trail = GetComponentInChildren<TrailRenderer>();
+    }
 
     // Use this for initialization
     void Start()
@@ -37,9 +41,10 @@ public class BulletManager : MonoBehaviour
 
                 enemyHealth = collision.transform.parent.GetComponent<EnemyHealth>();
             }
-            enemyHealth.TakeDamage(10, (enemyHealth.transform.position - transform.position).normalized * 1000);
 
+            enemyHealth.TakeDamage(40, (enemyHealth.transform.position - transform.position).normalized * 1000);
             MeshSlicer meshSlicer = collision.gameObject.GetComponentInParent<MeshSlicer>();
+
             if (meshSlicer != null && enemyHealth.currentHealth <= 0)
             {
 
@@ -49,19 +54,18 @@ public class BulletManager : MonoBehaviour
                 cutPlanes.Add(transform.TransformDirection(new Vector3(1, Random.Range(-1f, 1f), Random.Range(-0.2f, 0.2f))));
                 cutPlanes.Add(transform.TransformDirection(new Vector3(Random.Range(-0.2f, 0.2f), 1, 0)));
 
-
                 meshSlicer.TryCut(transform.position, cutPlanes);
-
             }
         }
+
         End();
     }
 
     void End()
     {
         neutralized = true;
-        GetComponent<Renderer>().material = neutralMaterial;
-        Destroy(gameObject, 2);
+        Destroy(gameObject, 0.5f);
+        trail.enabled = false;
     }
 
     // Update is called once per frame

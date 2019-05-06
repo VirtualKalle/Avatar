@@ -21,6 +21,8 @@ public struct TransformRecording
 public class GunManager : MonoBehaviour
 {
 
+    [SerializeField] ParticleSystem muzzleParticle;
+    [SerializeField] ParticleSystem shellParticle;
     Item item;
     public float shootCoolDownTimeLeft { get; private set; }
 
@@ -70,8 +72,10 @@ public class GunManager : MonoBehaviour
         if (!hasShot)
         {
             Shoot(muzzle.transform.position, muzzle.transform.rotation);
-            
+            muzzleParticle.Play();
+            shellParticle.Play();
             m_audioSorce.PlayOneShot(gunShotAudioClip);
+
             if (AvatarGameManager.bulletTime)
             {
                 m_audioSorce.pitch = 0.5f;

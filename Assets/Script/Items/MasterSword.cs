@@ -18,9 +18,9 @@ public class MasterSword : MonoBehaviour
     private Vector3 currentBladeSliceDirection;
     private float currentVelocityMag;
     private float meanTimeLeft = 0.1f;
-    private float meanTimeInterval = 0.05f;
-    private float swordStartThreshold = 2f;
-    private float swordStopThreshold = 0.5f;
+    private float meanTimeInterval = 0.01f;
+    private float swordStartThreshold = 4f;
+    private float swordStopThreshold = 0.3f;
     private float spawnTrailTimeLeft;
     private float spawnTrailInterval = 0.02f;
     [SerializeField] GameObject trailObject;
@@ -29,11 +29,11 @@ public class MasterSword : MonoBehaviour
     private float maxForce = 1000;
     private float minForce = 100;
     [SerializeField] float scaleFactor = 1;
-
+    [SerializeField] ParticleSystem m_particles;
     [SerializeField] AudioClip swooshAudioClip;
     AudioSource m_audioSorce;
     private bool isGrown;
-    private float grownScale = 1.5f;
+    private float grownScale = 2f;
 
     // Use this for initialization
     void Start()
@@ -57,7 +57,7 @@ public class MasterSword : MonoBehaviour
             CheckVelocity();
             if (activeSword)
             {
-                SpawnTrail();
+                //SpawnTrail();
             }
         }
 
@@ -96,7 +96,6 @@ public class MasterSword : MonoBehaviour
         if (other.gameObject.CompareTag("Enemy") && activeSword)
         {
             EnemyHealth enemyHealth = other.GetComponentInParent<EnemyHealth>();
-            //Vector3 force = currentVelocity * 50;
             Vector3 force = transform.forward * 100;
             int damage = (int)currentVelocity.magnitude * 3;
 
@@ -111,6 +110,7 @@ public class MasterSword : MonoBehaviour
             if (meshSlicer != null && activeSword && enemyHealth.currentHealth <= 0)
             {
                 meshSlicer.TryCut(transform.position, Vector3.Cross(transform.forward, currentBladeSliceDirection.normalized));
+
             }
         }
     }
@@ -119,13 +119,12 @@ public class MasterSword : MonoBehaviour
     {
         meanTimeLeft -= Time.unscaledDeltaTime;
 
-        if (meanTimeLeft < 0)
+        //if (meanTimeLeft < 0)
+        if (true)
         {
-            //currentVelocity = (transform.position - Avatar.position - lastPos) / Time.unscaledDeltaTime;
             currentVelocity = (Avatar.InverseTransformPoint(transform.position) - lastPos) / Time.unscaledDeltaTime;
 
             currentVelocityMag = currentVelocity.magnitude;
-            //Debug.Log("currentVelocity " + currentVelocity + "\n currentVelocityMag " + currentVelocity.magnitude);
             lastPos = Avatar.InverseTransformPoint(transform.position);
 
             currentBladeSliceDirection = (blade.transform.position - lastBladeSliceDirection) / Time.unscaledDeltaTime;
@@ -145,6 +144,9 @@ public class MasterSword : MonoBehaviour
             bladeCollider.enabled = true;
             activeSword = true;
             m_audioSorce.PlayOneShot(swooshAudioClip);
+            //m_particles.SetActive(true);
+            m_particles.Play();
+
             if (AvatarGameManager.bulletTime)
             {
                 m_audioSorce.pitch = 0.5f;
@@ -154,12 +156,15 @@ public class MasterSword : MonoBehaviour
                 m_audioSorce.pitch = 1f;
             }
         }
-        else if (currentVelocityMag < swordStopThreshold && activeSword || m_item.m_itemState != ItemState.unholstered)
+        else if ((currentVelocityMag < swordStopThreshold  || m_item.m_itemState != ItemState.unholstered) && activeSword)
         {
             //Debug.Log("blue");
+            m_particles.Stop();
             BladeRenderer.material = blue;
             bladeCollider.enabled = false;
             activeSword = false;
+
+            //m_particles.SetActive(false);
         }
 
     }
