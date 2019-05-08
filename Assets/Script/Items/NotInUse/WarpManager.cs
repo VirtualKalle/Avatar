@@ -4,23 +4,24 @@ using UnityEngine;
 
 public class WarpManager : MonoBehaviour
 {
+    [HideInInspector] public float recordTimeInterval;
+    float recordUnscaledTimeLeft;
+    float spawnTrailInterval;
+    float spawnTrailTimeLeft;
+
+    public bool recording;
+    bool action;
+
     [SerializeField] List<GameObject> actionObjects;
     [SerializeField] GameObject trailObject;
     [SerializeField] GameObject ghostObject;
     [SerializeField] GameObject actionObject;
+
     GhostManager m_ghostManager;
     GunManager m_gunManager;
 
     public List<TransformRecording> transformRecordings { get; private set; }
-    [HideInInspector] public float recordTimeInterval;
-    float recordUnscaledTimeLeft;
-    float trailTimeLeft;
-    float trailInterval;
-    private float spawnTrailInterval;
-    private float spawnTrailTimeLeft;
-    public bool recording;
     private TransformRecording transformRecording;
-    private bool action;
 
     private void OnEnable()
     {
@@ -34,7 +35,6 @@ public class WarpManager : MonoBehaviour
         AvatarGameManager.realTimeEvent -= StopRecording;
     }
 
-    // Use this for initialization
     void Start()
     {
         recordTimeInterval = 0.1f;
@@ -48,7 +48,6 @@ public class WarpManager : MonoBehaviour
         InitiateRecording();
     }
 
-    // Update is called once per frame
     void Update()
     {
 
@@ -101,7 +100,6 @@ public class WarpManager : MonoBehaviour
 
             recordUnscaledTimeLeft = recordTimeInterval;
 
-            //Debug.Log("RecordStates, recording.Count " + transformRecordings.Count);
         }
     }
 
@@ -141,6 +139,7 @@ public class WarpManager : MonoBehaviour
     void SpawnTrail()
     {
         spawnTrailTimeLeft -= Time.unscaledDeltaTime;
+
         if (spawnTrailTimeLeft < 0)
         {
             GameObject trailObjectClone = Instantiate(trailObject, transform.position, transform.rotation, transform.root);
@@ -162,10 +161,7 @@ public class WarpManager : MonoBehaviour
         {
             transformRecording = transformRecordings[0];
             transformRecordings.RemoveAt(0);
-
-            //Debug.Log("GetNextTargetTransform, recording.Count " + transformRecordings.Count);
         }
-
 
         return transformRecording;
 

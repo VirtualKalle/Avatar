@@ -4,29 +4,26 @@ using UnityEngine;
 
 public class GhostManager : MonoBehaviour
 {
-
-    public WarpManager m_warpManager;
-    public GunManager m_gunManager;
-
-    [SerializeField] GameObject muzzle;
-
-    public Vector3 startPosition;
-    public Quaternion startRotation;
-
-    TransformRecording recordedTarget;
-    public Vector3 recordedTargetPosition;
-    public Quaternion recordedTargetRotation;
-
-    public Transform liveTargetTransform;
-
     public float currenctTime;
     private float travelTime;
     private float maxRotError = 0.001f;
     private float maxPosError = 0.001f;
-
     private float replaySpeed = 10;
 
-    // Use this for initialization
+    public Vector3 startPosition;
+    public Quaternion startRotation;
+
+    public Vector3 recordedTargetPosition;
+    public Quaternion recordedTargetRotation;
+
+    [SerializeField] GameObject muzzle;
+    public Transform liveTargetTransform;
+
+    public WarpManager m_warpManager;
+    public GunManager m_gunManager;
+
+    TransformRecording recordedTarget;
+
     void Start()
     {
         travelTime = m_warpManager.recordTimeInterval;
@@ -37,8 +34,6 @@ public class GhostManager : MonoBehaviour
         SetFirstTransform();
     }
 
-
-    // Update is called once per frame
     void Update()
     {
         LerpTransform();

@@ -17,6 +17,10 @@ public class CameraFade : MonoBehaviour {
         AvatarGameManager.bulletTimeEvent -= FadeRed;
         AvatarGameManager.realTimeEvent -= Transparent;
     }
+    
+    void Start () {
+        m_material = GetComponent<Renderer>().material;
+	}
 
     void FadeRed()
     {
@@ -28,14 +32,5 @@ public class CameraFade : MonoBehaviour {
     {
         m_material.color = new Color(255, 0, 0, 0);
     }
-
-    // Use this for initialization
-    void Start () {
-        m_material = GetComponent<Renderer>().material;
-	}
 	
-	// Update is called once per frame
-	void Update () {
-		
-	}
 }

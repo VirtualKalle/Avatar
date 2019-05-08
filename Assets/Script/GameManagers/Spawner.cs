@@ -2,32 +2,16 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Spawner : MonoBehaviour {
-
-    [SerializeField] Transform spawnPointParent;
-    [SerializeField] Transform[] spawnPoints;
+public class Spawner : MonoBehaviour
+{
     float spawnTimeLeft = 5;
     float spawnTimeInterval = 5;
 
-    [SerializeField] GameObject enemy;
     private int enemycount;
 
-    // Use this for initialization
-    void Start () {
+    [SerializeField] Transform[] spawnPoints;
 
-
-    }
-	
-	// Update is called once per frame
-	void Update ()
-    {
-
-        //if (!FindObjectOfType<EnemyHealth>())
-        if (FindObjectsOfType<EnemyHealth>().Length < 5 && !AvatarHealth.isDead)
-        {
-            //SpawnCountDown();
-        }
-    }
+    [SerializeField] GameObject enemy;
 
     void SpawnCountDown()
     {
@@ -42,10 +26,8 @@ public class Spawner : MonoBehaviour {
 
     public void Spawn(int idx)
     {
-        
         Instantiate(enemy, spawnPoints[idx].position, spawnPoints[idx].rotation, transform.root);
         enemycount++;
-
     }
 
 }

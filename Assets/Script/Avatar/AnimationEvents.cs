@@ -12,11 +12,6 @@ public class AnimationEvents : MonoBehaviour {
         m_BipedIK = GetComponent<BipedIK>();
     }
 
-    // Use this for initialization
-    void Start () {
-
-    }
-
     public void EnableIK()
     {
         m_BipedIK.enabled = true;
@@ -27,8 +22,4 @@ public class AnimationEvents : MonoBehaviour {
         m_BipedIK.enabled = false;
     }
 
-    // Update is called once per frame
-    void Update () {
-		
-	}
 }

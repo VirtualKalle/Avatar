@@ -12,18 +12,9 @@ public class SpawnButton : MonoBehaviour {
         m_spawner = GetComponentInParent<Spawner>();
     }
 
-    // Use this for initialization
-    void Start () {
-		
-	}
-
     private void OnCollisionEnter(Collision collision)
     {
         m_spawner.Spawn(idx);
     }
 
-    // Update is called once per frame
-    void Update () {
-		
-	}
 }

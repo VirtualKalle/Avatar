@@ -24,47 +24,54 @@ public class GunManager : MonoBehaviour
     [SerializeField] ParticleSystem muzzleParticle;
     [SerializeField] ParticleSystem shellParticle;
     Item item;
-    public float shootCoolDownTimeLeft { get; private set; }
+    public float shootCoolDownTimeLeft;
 
     [SerializeField] GameObject bullet;
     [SerializeField] GameObject muzzle;
 
-    private bool isGrabbed;
-    private bool shootCoolDown;
-    private float shootCoolDownTime = 1f;
-    private bool hasShot;
+    bool isGrabbed;
+    bool shootCoolDown;
+    bool hasShot;
     float shootThreshold = 0.5f;
+
     [SerializeField] AudioClip gunShotAudioClip;
     AudioSource m_audioSorce;
 
-    // Use this for initialization
     void Start()
     {
         item = GetComponent<Item>();
         m_audioSorce = GetComponent<AudioSource>();
     }
 
+    void Update()
+    {
+
+        if (item.m_itemState == ItemState.unholstered && !AvatarGameManager.paused && !AvatarHealth.isDead && shootCoolDownTimeLeft > 0)
+        {
+            OnTriggerShoot();
+        }
+
+        ShootCountDown();
+    }
+
     void OnTriggerShoot()
     {
-        //Debug.Log("OnTriggerShoot Start");
         if (item.m_hand == Hand.Left && OVRInput.Get(OVRInput.Axis1D.PrimaryIndexTrigger, OVRInput.Controller.LTouch) > shootThreshold && !hasShot)
         {
-            //Debug.Log("Shoot left");
             TryShoot();
         }
         else if (item.m_hand == Hand.Right && OVRInput.Get(OVRInput.Axis1D.PrimaryIndexTrigger, OVRInput.Controller.RTouch) > shootThreshold && !hasShot)
         {
-            //Debug.Log("Shoot right");
             TryShoot();
         }
-        else if (
-                (item.m_hand == Hand.Left && OVRInput.Get(OVRInput.Axis1D.PrimaryIndexTrigger, OVRInput.Controller.LTouch) < shootThreshold ||
-                item.m_hand == Hand.Right && OVRInput.Get(OVRInput.Axis1D.PrimaryIndexTrigger, OVRInput.Controller.RTouch) < shootThreshold) &&
-                hasShot)
+        else if(
+                (((item.m_hand == Hand.Left && OVRInput.Get(OVRInput.Axis1D.PrimaryIndexTrigger, OVRInput.Controller.LTouch) < shootThreshold) ||
+                (item.m_hand == Hand.Right && OVRInput.Get(OVRInput.Axis1D.PrimaryIndexTrigger, OVRInput.Controller.RTouch) < shootThreshold))) &&
+                hasShot
+                )
         {
             hasShot = false;
         }
-        //Debug.Log("OnTriggerShoot End");
     }
 
     void TryShoot()
@@ -92,18 +99,6 @@ public class GunManager : MonoBehaviour
     {
         GameObject bulletClone = Instantiate(bullet, pos, rot);
         bulletClone.transform.localScale *= transform.lossyScale.magnitude;
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-
-        if (item.m_itemState == ItemState.unholstered && !AvatarGameManager.paused && !AvatarHealth.isDead)
-        {
-            OnTriggerShoot();
-        }
-
-        ShootCountDown();
     }
 
     private void ShootCountDown()

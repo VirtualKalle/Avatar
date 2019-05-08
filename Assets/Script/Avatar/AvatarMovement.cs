@@ -6,54 +6,47 @@ using UnityEngine.AI;
 public class AvatarMovement : MonoBehaviour
 {
 
-    private bool rotated;
-    [SerializeField] Animator m_animator;
-    private Vector2 move;
-    Vector2 moveInput;
+    bool rotated;
+    bool moveXKey;
+    bool moveYKey;
+    bool autoMove;
+    bool startedMoving;
+    bool isJumping;
+
     float rotate;
-    private bool moveKey;
+    float meanTimeLeft;
+
+    Vector2 move;
+    Vector2 moveInput;
     Vector2 direction;
-    [SerializeField] Transform destinationPointer;
-    private Vector3 distance;
-    Rigidbody rb;
-    private float meanTimeLeft;
-    private Vector3 currentVelocity;
-    private float currentVelocityMag;
-    private Vector3 lastPos;
-    private float meanTimeInterval;
-    private bool autoMove;
-    private bool startedMoving;
 
-    Camera mainCamera;
-
+    Vector3 currentVelocity;
+    Vector3 distance;
+    Vector3 lastPos;
+    Vector3 jumpVelocity;
     Vector3 fwd;
     Vector3 right;
-    [SerializeField] float moveSpeed = 2f;
-    private NavMeshAgent nav;
-    private bool isJumping;
-    [SerializeField] Collider m_Collider;
-    private Vector3 jumpVelocity;
 
-    private void Awake()
+    [SerializeField] float moveSpeed = 2f;
+    [SerializeField] Animator m_animator;
+    [SerializeField] Collider m_Collider;
+    [SerializeField] Transform destinationPointer;
+
+    NavMeshAgent nav;
+    Rigidbody rb;
+
+    void Awake()
     {
-        mainCamera = Camera.main;
         rb = GetComponent<Rigidbody>();
         nav = GetComponent<NavMeshAgent>();
     }
 
-    // Use this for initialization
-    void Start()
-    {
-    }
-
-    // Update is called once per frame
     void Update()
     {
         if (!AvatarHealth.isDead)
         {
             GetInput();
             Move();
-            //Twist();
             Rotate();
             AutoMoveToDestination();
             Velocity();
@@ -65,6 +58,29 @@ public class AvatarMovement : MonoBehaviour
         {
             autoMove = true;
             SetNewDestination();
+        }
+    }
+
+    void OnTriggerEnter(Collider col)
+    {
+        if (col.gameObject.layer == LayerMask.NameToLayer("Floor") && isJumping && rb.velocity.y < 0)
+        {
+
+            isJumping = false;
+            m_Collider.isTrigger = false;
+            nav.enabled = true;
+            rb.isKinematic = true;
+            m_animator.SetBool("Jumping", false);
+
+        }
+    }
+
+    
+    void OnTriggerExit(Collider col)
+    {
+        if (col.gameObject.layer == LayerMask.NameToLayer("Floor") && isJumping && rb.velocity.y > 0)
+        {
+            Debug.Log("jumped");
         }
     }
 
@@ -86,65 +102,24 @@ public class AvatarMovement : MonoBehaviour
 
     void Velocity()
     {
-
         currentVelocity = (transform.position - lastPos) / Time.deltaTime;
-
-        currentVelocityMag = currentVelocity.magnitude;
-        //Debug.Log("currentVelocity " + currentVelocity + "\n currentVelocityMag " + currentVelocity.magnitude);
         lastPos = transform.position;
-
-        meanTimeLeft = meanTimeInterval;
-
-    }
-
-
-    private void OnCollisionEnter(Collision collision)
-    {
-
-    }
-
-    private void OnCollisionExit(Collision collision)
-    {
-    }
-
-    private void OnTriggerEnter(Collider col)
-    {
-        if (col.gameObject.layer == LayerMask.NameToLayer("Floor") && isJumping && rb.velocity.y < 0)
-        {
-
-            isJumping = false;
-            m_Collider.isTrigger = false;
-            nav.enabled = true;
-            rb.isKinematic = true;
-            m_animator.SetBool("Jumping", false);
-
-        }
-    }
-
-
-
-    private void OnTriggerExit(Collider col)
-    {
-        if (col.gameObject.layer == LayerMask.NameToLayer("Floor") && isJumping && rb.velocity.y > 0)
-        {
-            Debug.Log("jumped");
-        }
     }
 
     void Jump()
     {
+
         if ((OVRInput.GetDown(OVRInput.Button.One, OVRInput.Controller.RTouch) || Input.GetKeyDown(KeyCode.Space)) && !isJumping)
         {
             nav.enabled = false;
             rb.isKinematic = false;
             m_Collider.isTrigger = true;
             isJumping = true;
-            rb.AddForce(Vector3.up *50, ForceMode.Impulse);
+            rb.AddForce(Vector3.up * 50, ForceMode.Impulse);
             m_animator.SetBool("Jumping", true);
-
-
             jumpVelocity = currentVelocity;
         }
+
     }
 
     void UpdateAnimation()
@@ -172,24 +147,23 @@ public class AvatarMovement : MonoBehaviour
         }
         else
         {
-            if (moveKey)
-            {
-                moveKey = false;
-            }
+                moveXKey = false;
+                moveYKey = false;
+
 
             if (Input.GetKey(KeyCode.W))
             {
                 move.y += 2 * Time.deltaTime;
                 move.y = Mathf.Max(0, move.y);
                 move.y = Mathf.Min(1, move.y);
-                moveKey = true;
+                moveYKey = true;
             }
             else if (Input.GetKey(KeyCode.S))
             {
                 move.y -= 2 * Time.deltaTime;
                 move.y = Mathf.Min(0, move.y);
                 move.y = Mathf.Max(-1, move.y);
-                moveKey = true;
+                moveYKey = true;
             }
 
             if (!Input.GetKey(KeyCode.W) && !Input.GetKey(KeyCode.S))
@@ -202,14 +176,14 @@ public class AvatarMovement : MonoBehaviour
                 move.x += 2 * Time.deltaTime;
                 move.x = Mathf.Max(0, move.x);
                 move.x = Mathf.Min(1, move.x);
-                moveKey = true;
+                moveXKey = true;
             }
             else if (Input.GetKey(KeyCode.A))
             {
                 move.x -= 2 * Time.deltaTime;
                 move.x = Mathf.Min(0, move.x);
                 move.x = Mathf.Max(-1, move.x);
-                moveKey = true;
+                moveXKey = true;
             }
 
             if (!Input.GetKey(KeyCode.D) && !Input.GetKey(KeyCode.A))
@@ -217,36 +191,15 @@ public class AvatarMovement : MonoBehaviour
                 move.x = 0;
             }
 
-
         }
 
-        if (Mathf.Abs(OVRInput.Get(OVRInput.RawAxis2D.LThumbstick).x) > 0.1)
-        {
-            rotate = OVRInput.Get(OVRInput.RawAxis2D.LThumbstick).x;
-        }
-        else
-        {
-            if (Input.GetKey(KeyCode.E))
-            {
-                rotate = 1;
-            }
-            else if (Input.GetKey(KeyCode.Q))
-            {
-                rotate = -1;
-            }
-            else
-            {
-                rotate = 0;
-            }
-        }
     }
 
-    private void Move()
+    void Move()
     {
 
-        if ((OVRInput.Get(OVRInput.RawAxis2D.LThumbstick).magnitude > 0.1f || moveKey))
+        if ((OVRInput.Get(OVRInput.RawAxis2D.LThumbstick).magnitude > 0.1f || moveYKey || moveXKey))
         {
-            //Debug.Log("Input " + move);
             if (!startedMoving)
             {
                 fwd = Vector3.ProjectOnPlane((transform.position - Camera.main.transform.position), Vector3.up).normalized;
@@ -258,7 +211,7 @@ public class AvatarMovement : MonoBehaviour
             nav.velocity = move.y * fwd * AvatarGameManager.worldScale * moveSpeed + (-move.x * right * AvatarGameManager.worldScale * moveSpeed);
 
         }
-        else if (OVRInput.Get(OVRInput.RawAxis2D.LThumbstick).magnitude < 0.1f && !moveKey && startedMoving)
+        else if (OVRInput.Get(OVRInput.RawAxis2D.LThumbstick).magnitude < 0.1f && moveYKey && moveXKey && startedMoving)
         {
             startedMoving = false;
         }
@@ -273,31 +226,26 @@ public class AvatarMovement : MonoBehaviour
     {
         Camera camera = Camera.main;
         Vector3 direction = Vector3.ProjectOnPlane(transform.position - camera.transform.position, new Vector3(0, 1, 0));
-
         transform.Rotate(new Vector3(0, 1, 0), Vector3.SignedAngle(transform.forward, direction, new Vector3(0, 1, 0)), Space.World);
-
     }
 
     void Twist()
     {
-        //h1 = CrossPlatformInputManager.GetAxis("Horizontal"); // set as your inputs 
-        float h1 = OVRInput.Get(OVRInput.RawAxis2D.RThumbstick).x; // set as your inputs 
+        float h1 = OVRInput.Get(OVRInput.RawAxis2D.RThumbstick).x;
         float v1 = OVRInput.Get(OVRInput.RawAxis2D.RThumbstick).y;
 
         if (h1 == 0f && v1 == 0f)
-        { // this statement allows it to recenter once the inputs are at zero 
-            Vector3 curRot = transform.localEulerAngles; // the object you are rotating
+        {
+            Vector3 curRot = transform.localEulerAngles; 
             Vector3 homeRot;
             if (curRot.y > 180f)
-            { // this section determines the direction it returns home 
-              //Debug.Log(curRot.y);
-                homeRot = new Vector3(0f, 359.999f, 0f); //it doesnt return to perfect zero 
+            {
+                homeRot = new Vector3(0f, 359.999f, 0f);
             }
             else
-            {                                                                      // otherwise it rotates wrong direction 
+            {
                 homeRot = Vector3.zero;
             }
-            //transform.localEulerAngles = Vector3.Slerp(curRot, homeRot, Time.deltaTime * 2);
         }
         else
         {

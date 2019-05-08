@@ -11,9 +11,7 @@ public class Align : MonoBehaviour
 
     [SerializeField] float forceScaler;
     [SerializeField] float torqueScaler;
-
-    private float limitAngle = 80;
-
+    
     private float UpAngleDiff;
     private float UpAngleLimitScaler;
     private float RightAngleDiff;
@@ -22,12 +20,6 @@ public class Align : MonoBehaviour
     private float ForwardAngleLimitScaler;
     private float theta;
 
-    // Use this for initialization
-    void Start()
-    {
-    }
-
-    // Update is called once per frame
     void Update()
     {
         Force();
@@ -54,21 +46,8 @@ public class Align : MonoBehaviour
         Vector3 x = Vector3.Cross(go.transform.forward.normalized, transform.forward.normalized);
         float theta = Mathf.Asin(x.magnitude);
         Vector3 w = x.normalized * theta;
-
         Quaternion q = go.transform.rotation * go.inertiaTensorRotation;
-
-        //ForwardAngleDiff = Vector3.Angle(go.transform.forward, transform.forward);
-
-        //if (ForwardAngleDiff >= limitAngle + 1)
-        //{
-        //    ForwardAngleLimitScaler = (ForwardAngleDiff - limitAngle);
-        //}
-        //else
-        //{
-        //    ForwardAngleLimitScaler = 1;
-        //}
-
-        Vector3 torque = q * Vector3.Scale(go.inertiaTensor, (Quaternion.Inverse(q) * w)) * torqueScaler /** ForwardAngleLimitScaler*/;
+        Vector3 torque = q * Vector3.Scale(go.inertiaTensor, (Quaternion.Inverse(q) * w)) * torqueScaler;
 
         go.AddTorque(torque, ForceMode.Impulse);
 
@@ -79,22 +58,8 @@ public class Align : MonoBehaviour
         Vector3 x = Vector3.Cross(go.transform.up.normalized, transform.up.normalized);
         float theta = Mathf.Asin(x.magnitude);
         Vector3 w = x.normalized * theta;
-
         Quaternion q = go.transform.rotation * go.inertiaTensorRotation;
-
-        //UpAngleDiff = Vector3.Angle(go.transform.up, transform.up);
-
-
-        //if (UpAngleDiff >= limitAngle + 1)
-        //{
-        //    UpAngleLimitScaler = (UpAngleDiff - limitAngle);
-        //}
-        //else
-        //{
-        //    UpAngleLimitScaler = 1;
-        //}
-
-        Vector3 torque = q * Vector3.Scale(go.inertiaTensor, (Quaternion.Inverse(q) * w)) * torqueScaler /** UpAngleLimitScaler*/;
+        Vector3 torque = q * Vector3.Scale(go.inertiaTensor, (Quaternion.Inverse(q) * w)) * torqueScaler;
 
         go.AddTorque(torque, ForceMode.Impulse);
 
@@ -107,25 +72,10 @@ public class Align : MonoBehaviour
         Vector3 w = x.normalized * theta;
 
         Quaternion q = go.transform.rotation * go.inertiaTensorRotation;
-
-        //RightAngleDiff = Vector3.Angle(go.transform.right, transform.right);
-        
-        //if (RightAngleDiff >= limitAngle + 1)
-        //{
-        //    RightAngleLimitScaler = (RightAngleDiff - limitAngle);
-        //}
-        //else
-        //{
-        //    RightAngleLimitScaler = 1;
-        //}
-
-        Vector3 torque = q * Vector3.Scale(go.inertiaTensor, (Quaternion.Inverse(q) * w)) * torqueScaler /** RightAngleLimitScaler*/;
+        Vector3 torque = q * Vector3.Scale(go.inertiaTensor, (Quaternion.Inverse(q) * w)) * torqueScaler;
 
         go.AddTorque(torque, ForceMode.Impulse);
-
     }
-
-    
 
     private Vector3 RectifyAngleDifference(Vector3 angdiff)
     {

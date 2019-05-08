@@ -12,7 +12,6 @@ public class EnemyAttack : MonoBehaviour
     float attackTime = 1;
 
 
-    // Use this for initialization
     void Awake()
     {
         avatarHealth = FindObjectOfType<AvatarHealth>();
@@ -21,7 +20,6 @@ public class EnemyAttack : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-
         if (other.gameObject.CompareTag("Avatar"))
         {
             inReach = true;
@@ -30,7 +28,6 @@ public class EnemyAttack : MonoBehaviour
 
     private void OnTriggerExit(Collider other)
     {
-
         if (other.gameObject.CompareTag("Avatar"))
         {
             inReach = false;
@@ -48,7 +45,6 @@ public class EnemyAttack : MonoBehaviour
                 attackTimeLeft = attackTime;
             }
         }
-
     }
 
     void Attack()
@@ -60,13 +56,12 @@ public class EnemyAttack : MonoBehaviour
         m_animator.SetBool("attack", false);
     }
 
-    // Update is called once per frame
+
     void Update()
     {
         if (!AvatarHealth.isDead)
         {
             AttackCooldown();
         }
-
     }
 }

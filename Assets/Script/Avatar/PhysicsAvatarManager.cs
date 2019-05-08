@@ -13,19 +13,9 @@ public class PhysicsAvatarManager : MonoBehaviour {
 
     [SerializeField] Transform head;
     [SerializeField] float forceScaler;
-
-    //[SerializeField] Transform body;
-    //Vector3 bodyRelativePosition;
-    //Quaternion bodyRelativeRotation;
-
-
-    // Use this for initialization
-    void Start () {
-		
-	}
-	
-	// Update is called once per frame
-	void Update () {
+    
+	void Update ()
+    {
         FollowTransform();
     }
 

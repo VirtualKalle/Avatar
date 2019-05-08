@@ -12,6 +12,25 @@ public class GameSoundController : MonoBehaviour
     enum Pitch { None, Up, Down };
     Pitch m_Pitch;
 
+
+    private void OnEnable()
+    {
+        AvatarGameManager.bulletTimeEvent += SetPitchDown;
+        AvatarGameManager.realTimeEvent += SetPitchUp;
+    }
+
+    private void OnDisable()
+    {
+        AvatarGameManager.bulletTimeEvent -= SetPitchDown;
+        AvatarGameManager.realTimeEvent -= SetPitchUp;
+    }
+
+    void Update()
+    {
+        PitchUp();
+        PitchDown();
+    }
+
     void PitchUp()
     {
         if (m_Pitch == Pitch.Up)
@@ -64,31 +83,5 @@ public class GameSoundController : MonoBehaviour
     void SetPitchUp()
     {
         m_Pitch = Pitch.Up;
-    }
-
-    private void OnEnable()
-    {
-        AvatarGameManager.bulletTimeEvent += SetPitchDown;
-        AvatarGameManager.realTimeEvent += SetPitchUp;
-    }
-
-    private void OnDisable()
-    {
-        AvatarGameManager.bulletTimeEvent -= SetPitchDown;
-        AvatarGameManager.realTimeEvent -= SetPitchUp;
-
-    }
-
-    // Use this for initialization
-    void Start()
-    {
-
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        PitchUp();
-        PitchDown();
     }
 }

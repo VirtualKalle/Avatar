@@ -2,17 +2,15 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class FollowTransform : MonoBehaviour {
+public class FollowTransform : MonoBehaviour
+{
 
-    [SerializeField] Transform trans;
-    public float speed = 5;
     [SerializeField] bool fix;
     [SerializeField] bool local;
 
-    // Use this for initialization
-    void Start () {
-		
-	}
+    public float speed = 5;
+
+    [SerializeField] Transform trans;
 
     private void OnEnable()
     {
@@ -20,8 +18,8 @@ public class FollowTransform : MonoBehaviour {
         transform.rotation = Quaternion.identity;
     }
 
-    // Update is called once per frame
-    void Update () {
+    void Update()
+    {
         if (fix && local)
         {
             transform.localPosition = trans.position;

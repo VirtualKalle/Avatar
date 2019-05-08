@@ -5,18 +5,17 @@ using UnityEngine;
 public class BulletManager : MonoBehaviour
 {
 
-    [SerializeField] Rigidbody rb;
     [SerializeField] float velocity = 10f;
     private bool neutralized;
-    TrailRenderer trail;
 
+    TrailRenderer trail;
+    [SerializeField] Rigidbody rb;
 
     private void Awake()
     {
         trail = GetComponentInChildren<TrailRenderer>();
     }
 
-    // Use this for initialization
     void Start()
     {
         rb.velocity = transform.forward * velocity * AvatarGameManager.worldScale;
@@ -38,7 +37,6 @@ public class BulletManager : MonoBehaviour
             }
             else
             {
-
                 enemyHealth = collision.transform.parent.GetComponent<EnemyHealth>();
             }
 
@@ -47,7 +45,6 @@ public class BulletManager : MonoBehaviour
 
             if (meshSlicer != null && enemyHealth.currentHealth <= 0)
             {
-
                 List<Vector3> cutPlanes = new List<Vector3>();
 
                 cutPlanes.Add(transform.TransformDirection(new Vector3(1, Random.Range(-0.2f, 0.2f), 0)));
@@ -57,7 +54,6 @@ public class BulletManager : MonoBehaviour
                 meshSlicer.TryCut(transform.position, cutPlanes);
             }
         }
-
         End();
     }
 
@@ -66,11 +62,5 @@ public class BulletManager : MonoBehaviour
         neutralized = true;
         Destroy(gameObject, 0.5f);
         trail.enabled = false;
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-
     }
 }

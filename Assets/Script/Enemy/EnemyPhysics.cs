@@ -14,7 +14,6 @@ public class EnemyPhysics : MonoBehaviour
         rb = GetComponent<Rigidbody>();
     }
 
-    // Use this for initialization
     void Start()
     {
         bodyParts = new List<Rigidbody>(GetComponentsInChildren<Rigidbody>());
@@ -26,16 +25,11 @@ public class EnemyPhysics : MonoBehaviour
                 bodyParts.RemoveAt(i);
             }
         }
-
-        
     }
 
 
     public void DeathPhysics(Vector3 force)
     {
-        
-
-
         foreach (Rigidbody go in bodyParts)
         {
             go.GetComponent<Collider>().enabled = true;

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public enum ItemState { holstered, unholstered, holstering, unholstering }
+public enum Hand { Right, Left }
 
 public class Item : MonoBehaviour
 {
@@ -59,8 +60,6 @@ public class Item : MonoBehaviour
 
     void MoveToPosition()
     {
-        //stepVector = (target.position - transform.position).normalized * Time.unscaledDeltaTime * AvatarGameManager.worldScale;
-        //relativeStartDistance = (target.position - transform.position).magnitude / AvatarGameManager.worldScale;
         stepVector = (target.position - transform.position).normalized * Time.unscaledDeltaTime * 1;
         relativeStartDistance = (target.position - transform.position).magnitude / 1;
         if (relativeStartDistance > 0.05)
@@ -70,13 +69,11 @@ public class Item : MonoBehaviour
             {
                 transform.Translate(stepVector * 3, Space.World);
                 transform.Rotate((-360 * 4) * Time.deltaTime, 0, 0);
-                //Debug.Log("Translate distance left" + (target.position - transform.position).magnitude + "of " + transform.name);
             }
             else
             {
                 transform.position = Vector3.Lerp(transform.position, target.position, Time.unscaledDeltaTime * 50);
                 transform.rotation = Quaternion.Lerp(transform.rotation, target.rotation, Time.unscaledDeltaTime * 20);
-                //Debug.Log("Lerp distance left " + (target.position - transform.position).magnitude + "of " + transform.name);
             }
 
         }

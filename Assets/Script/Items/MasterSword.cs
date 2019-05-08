@@ -4,38 +4,37 @@ using UnityEngine;
 
 public class MasterSword : MonoBehaviour
 {
-    Item m_item;
-    [SerializeField] GameObject blade;
-    Renderer BladeRenderer;
-    [SerializeField] Material red;
-    [SerializeField] Material blue;
-    [SerializeField] Collider bladeCollider;
-
     private bool activeSword;
+    private bool isGrown;
     private Vector3 lastPos;
     private Vector3 currentVelocity;
-    private Vector3 lastBladeSliceDirection;
+    private Vector3 lastBladePosition;
     private Vector3 currentBladeSliceDirection;
     private float currentVelocityMag;
-    private float meanTimeLeft = 0.1f;
-    private float meanTimeInterval = 0.01f;
     private float swordStartThreshold = 4f;
     private float swordStopThreshold = 0.3f;
     private float spawnTrailTimeLeft;
     private float spawnTrailInterval = 0.02f;
+    private float minForce = 100;
+    private float maxForce = 1000;
+    private float grownScale = 2f;
+    [SerializeField] float scaleFactor = 1;
+
+    [SerializeField] Material red;
+    [SerializeField] Material blue;
+
+    [SerializeField] GameObject blade;
     [SerializeField] GameObject trailObject;
     GameObject trailObjectClone;
+    [SerializeField] Collider bladeCollider;
     Transform Avatar;
-    private float maxForce = 1000;
-    private float minForce = 100;
-    [SerializeField] float scaleFactor = 1;
+    AudioSource m_audioSorce;
+    Renderer BladeRenderer;
+
+    Item m_item;
     [SerializeField] ParticleSystem m_particles;
     [SerializeField] AudioClip swooshAudioClip;
-    AudioSource m_audioSorce;
-    private bool isGrown;
-    private float grownScale = 2f;
 
-    // Use this for initialization
     void Start()
     {
         if (scaleFactor == 0)
@@ -48,7 +47,6 @@ public class MasterSword : MonoBehaviour
         m_audioSorce = GetComponent<AudioSource>();
     }
 
-    // Update is called once per frame
     void Update()
     {
         if (m_item.m_itemState != ItemState.holstered && !AvatarGameManager.paused)
@@ -92,7 +90,6 @@ public class MasterSword : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        //Debug.Log("Swiftblade trigger enter " + other.transform.name);
         if (other.gameObject.CompareTag("Enemy") && activeSword)
         {
             EnemyHealth enemyHealth = other.GetComponentInParent<EnemyHealth>();
@@ -117,34 +114,21 @@ public class MasterSword : MonoBehaviour
 
     void MeanVelocity()
     {
-        meanTimeLeft -= Time.unscaledDeltaTime;
-
-        //if (meanTimeLeft < 0)
-        if (true)
-        {
-            currentVelocity = (Avatar.InverseTransformPoint(transform.position) - lastPos) / Time.unscaledDeltaTime;
-
-            currentVelocityMag = currentVelocity.magnitude;
-            lastPos = Avatar.InverseTransformPoint(transform.position);
-
-            currentBladeSliceDirection = (blade.transform.position - lastBladeSliceDirection) / Time.unscaledDeltaTime;
-            lastBladeSliceDirection = blade.transform.position;
-
-            meanTimeLeft = meanTimeInterval;
-        }
-
+        currentVelocity = (Avatar.InverseTransformPoint(transform.position) - lastPos) / Time.unscaledDeltaTime;
+        currentVelocityMag = currentVelocity.magnitude;
+        lastPos = Avatar.InverseTransformPoint(transform.position);
+        currentBladeSliceDirection = (blade.transform.position - lastBladePosition) / Time.unscaledDeltaTime;
+        lastBladePosition = blade.transform.position;
     }
 
     void CheckVelocity()
     {
         if (currentVelocityMag > swordStartThreshold && !activeSword && m_item.m_itemState == ItemState.unholstered)
         {
-            //Debug.Log("red");
             BladeRenderer.material = red;
             bladeCollider.enabled = true;
             activeSword = true;
             m_audioSorce.PlayOneShot(swooshAudioClip);
-            //m_particles.SetActive(true);
             m_particles.Play();
 
             if (AvatarGameManager.bulletTime)
@@ -156,19 +140,14 @@ public class MasterSword : MonoBehaviour
                 m_audioSorce.pitch = 1f;
             }
         }
-        else if ((currentVelocityMag < swordStopThreshold  || m_item.m_itemState != ItemState.unholstered) && activeSword)
+        else if ((currentVelocityMag < swordStopThreshold || m_item.m_itemState != ItemState.unholstered) && activeSword)
         {
-            //Debug.Log("blue");
             m_particles.Stop();
             BladeRenderer.material = blue;
             bladeCollider.enabled = false;
             activeSword = false;
-
-            //m_particles.SetActive(false);
         }
-
     }
-
 
     void SpawnTrail()
     {
@@ -182,6 +161,5 @@ public class MasterSword : MonoBehaviour
         }
 
     }
-
 
 }

@@ -5,19 +5,12 @@ using UnityEngine;
 public class EquipmentManager : MonoBehaviour
 {
 
-
     [SerializeField] Item rightHand_Melee;
     [SerializeField] Item rightHand_Range;
     [SerializeField] Item leftHand_Melee;
     [SerializeField] Item leftHand_Range;
 
 
-    // Use this for initialization
-    void Start()
-    {
-    }
-
-    // Update is called once per frame
     void Update()
     {
         if (!AvatarGameManager.paused && !AvatarHealth.isDead)
@@ -33,7 +26,6 @@ public class EquipmentManager : MonoBehaviour
                 rightHand_Melee.Holster();
             }
 
-
             if (OVRInput.GetDown(OVRInput.Button.PrimaryHandTrigger, OVRInput.Controller.LTouch))
             {
                 leftHand_Melee.Unholster();
@@ -44,20 +36,7 @@ public class EquipmentManager : MonoBehaviour
                 leftHand_Melee.Holster();
                 leftHand_Range.Unholster();
             }
-
         }
-
-
-    }
-
-
-
-    void Switch()
-    {
-        //Deactivate current eq
-        //Move current
-        //Move new
-        //Activate new
     }
 
 }

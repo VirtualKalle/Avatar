@@ -26,6 +26,5 @@ public class LookAtAnchor : MonoBehaviour
     void Update()
     {
         Rotate();
-
     }
 }

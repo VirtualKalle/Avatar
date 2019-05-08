@@ -5,41 +5,39 @@ using UnityEngine.UI;
 
 public class AvatarGameManager : MonoBehaviour
 {
-
-    public static bool debugMode;
     public static bool bulletTime;
     public static bool paused;
+
+    private float bulletTimeLeft;
     public static float timeDivisor = 10f;
     public static float timeScaler;
     public static float worldScale;
+    private static float previousTimeScale;
     
-
     public GameObject gameSpace;
 
     public delegate void GameManagerDelegate();
     public static GameManagerDelegate bulletTimeEvent;
     public static GameManagerDelegate realTimeEvent;
-    private static float previousTimeScale;
+
     [SerializeField] Slider bulletTimeSlider;
 
-    private float bulletTimeLeft;
 
 
-    // Use this for initialization
     private void Awake()
     {
         timeScaler = 1 / timeDivisor;
         worldScale = gameSpace.transform.lossyScale.magnitude / Mathf.Sqrt(3);
     }
 
-    void Start()
+    void Update()
     {
-        //Debug.Log("worldScale " + worldScale);
+        CheckBulletTime();
+        BulletTimeCounter();
     }
 
     void SetBulletTime()
     {
-
         Time.timeScale = 1 * timeScaler;
         Time.fixedDeltaTime = Time.fixedDeltaTime * timeScaler;
         bulletTime = true;
@@ -49,8 +47,6 @@ public class AvatarGameManager : MonoBehaviour
     void SetRealTime()
     {
         Time.timeScale = 1f;
-        //Time.fixedDeltaTime *= timeDivisor;
-
         Time.fixedDeltaTime /= timeScaler;
         bulletTime = false;
         realTimeEvent();
@@ -69,14 +65,8 @@ public class AvatarGameManager : MonoBehaviour
         paused = false;
     }
 
-
-
-
-    // Update is called once per frame
-    void Update()
+    void CheckBulletTime()
     {
-
-        //if (OVRInput.GetDown(OVRInput.Button.PrimaryThumbstick) || OVRInput.GetDown(OVRInput.Button.SecondaryThumbstick) || Input.GetKeyDown(KeyCode.O))
         if (OVRInput.GetDown(OVRInput.Button.Two, OVRInput.Controller.RTouch) || Input.GetKeyDown(KeyCode.O))
         {
             if (bulletTime)
@@ -88,7 +78,10 @@ public class AvatarGameManager : MonoBehaviour
                 SetBulletTime();
             }
         }
+    }
 
+    void BulletTimeCounter()
+    {
         if (bulletTime && !paused)
         {
             bulletTimeSlider.value -= Time.unscaledDeltaTime * 0.1f;
@@ -99,13 +92,13 @@ public class AvatarGameManager : MonoBehaviour
         }
         else
         {
-            if (bulletTimeLeft < 1 && !paused)
+            if (bulletTimeSlider.value < 1 && !paused)
             {
                 bulletTimeSlider.value += Time.unscaledDeltaTime * 0.3f;
                 bulletTimeSlider.value = Mathf.Min(1, bulletTimeSlider.value);
             }
 
         }
-
     }
+
 }

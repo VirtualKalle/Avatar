@@ -8,20 +8,12 @@ public class GameSpaceController : MonoBehaviour
     private float previousTimeScale;
     [SerializeField] Transform rotateAround;
 
-    // Use this for initialization
-    void Start()
-    {
-
-    }
 
     public void Rotate(int degrees)
     {
         transform.RotateAround(rotateAround.position, new Vector3(0,1,0), degrees);
     }
 
-
-
-    // Update is called once per frame
     void Update()
     {
         float horizontal = OVRInput.Get(OVRInput.RawAxis2D.RThumbstick).x;
@@ -57,7 +49,6 @@ public class GameSpaceController : MonoBehaviour
         }
         else if (OVRInput.Get(OVRInput.Button.PrimaryIndexTrigger, OVRInput.Controller.RTouch) && AvatarGameManager.paused)
         {
-            Time.timeScale = previousTimeScale;
             AvatarGameManager.UnPause();
         }
 
