@@ -90,9 +90,9 @@ public class MasterSword : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.gameObject.CompareTag("Enemy") && activeSword)
+        EnemyHealth enemyHealth = other.gameObject.GetComponentInParent<EnemyHealth>();
+        if (enemyHealth != null && activeSword)
         {
-            EnemyHealth enemyHealth = other.GetComponentInParent<EnemyHealth>();
             Vector3 force = transform.forward * 100;
             int damage = (int)currentVelocity.magnitude * 3;
 
@@ -103,13 +103,21 @@ public class MasterSword : MonoBehaviour
             force = force.magnitude < minForce ? force.normalized * minForce : force;
             enemyHealth.TakeDamage(damage, force);
 
-            MeshSlicer meshSlicer = other.GetComponentInParent<MeshSlicer>();
+            MeshSlicer meshSlicer = other.gameObject.GetComponent<MeshSlicer>();
             if (meshSlicer != null && activeSword && enemyHealth.currentHealth <= 0)
             {
                 meshSlicer.TryCut(transform.position, Vector3.Cross(transform.forward, currentBladeSliceDirection.normalized));
-
             }
         }
+        else
+        {
+            MeshSlicer meshSlicer = other.gameObject.GetComponent<MeshSlicer>();
+            if (meshSlicer != null && activeSword)
+            {
+                meshSlicer.TryCut(transform.position, Vector3.Cross(transform.forward, currentBladeSliceDirection.normalized));
+            }
+        }
+
     }
 
     void MeanVelocity()

@@ -46,7 +46,7 @@ public class GunManager : MonoBehaviour
     void Update()
     {
 
-        if (item.m_itemState == ItemState.unholstered && !AvatarGameManager.paused && !AvatarHealth.isDead && shootCoolDownTimeLeft > 0)
+        if (item.m_itemState == ItemState.unholstered && !AvatarGameManager.paused && !AvatarHealth.isDead && shootCoolDownTimeLeft <= 0)
         {
             OnTriggerShoot();
         }
