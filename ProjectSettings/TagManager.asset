@@ -6,6 +6,7 @@ TagManager:
   tags:
   - Enemy
   - Avatar
+  - FxTemporaire
   layers:
   - Default
   - TransparentFX
