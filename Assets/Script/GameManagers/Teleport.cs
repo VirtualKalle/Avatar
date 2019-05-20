@@ -8,6 +8,7 @@ public class Teleport : MonoBehaviour
     [SerializeField] Transform laserPointer;
     [SerializeField] Transform m_CameraRig;
     [SerializeField] GameObject teleportPointer;
+    [SerializeField] LineRenderer m_lineRenderer;
     private bool isPointing;
     Vector3 fwdDirection;
     Camera m_Camera;
@@ -67,6 +68,11 @@ public class Teleport : MonoBehaviour
                 teleportPointer.SetActive(true);
             }
 
+            if (!m_lineRenderer.enabled)
+            {
+                m_lineRenderer.enabled = true;
+            }
+
             if (!isPointing)
             {
                 isPointing = true;
@@ -78,6 +84,7 @@ public class Teleport : MonoBehaviour
         {
             isPointing = false;
             teleportPointer.SetActive(false);
+            m_lineRenderer.enabled = false;
             TeleportPlayer();
         }
     }

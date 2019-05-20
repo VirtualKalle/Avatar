@@ -2,35 +2,46 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+
 public class MeshSlicer : MonoBehaviour
 {
 
-    public bool isCut;
+    bool isCut;
 
     private int[] triangles;
-    
+
     private Vector3[] vertices;
 
     Plane cutPlane;
     Mesh mesh;
     [SerializeField] Material cutMaterial;
 
-    [SerializeField] GameObject plane;
-    [SerializeField] GameObject Centroid;
-    [SerializeField] GameObject SlicePrefab;
     Collider m_collider;
     Rigidbody rb;
+    MeshFilter meshFilter;
 
     void Awake()
     {
-        mesh = GetComponent<MeshFilter>().mesh;
+        meshFilter = GetComponent<MeshFilter>();
+        if (meshFilter == null)
+        {
+            meshFilter = GetComponentInChildren<MeshFilter>(); 
+        }
+
+        mesh = meshFilter.mesh;
+
         m_collider = GetComponent<Collider>();
+        if (m_collider == null)
+        {
+            m_collider = GetComponentInChildren<Collider>();
+        }
+
         vertices = mesh.vertices;
         triangles = mesh.triangles;
         rb = GetComponent<Rigidbody>();
     }
 
-    // Dominant side is the one with 2 verts of the cut plane
+    // Split triangle on two edges. Dominant side is the one with 2 verts of the cut plane
     List<Vector3> SplitFaceTriangles(List<Vector3> dominantVerts1, List<Vector3> subservientVerts, Plane cutPlane, Vector3 faceNormal)
     {
         Ray ray;
@@ -75,6 +86,7 @@ public class MeshSlicer : MonoBehaviour
         return splitVerts;
     }
 
+    // Split triangle on vertex (shared) and edge.
     List<Vector3> SplitVertexTriangles(List<Vector3> verts1, List<Vector3> verts2, Plane cutPlane, Vector3 faceNormal)
     {
         Vector3 exclusiveVertex1;
@@ -178,7 +190,7 @@ public class MeshSlicer : MonoBehaviour
         cutNormalList.RemoveAt(0);
         cutPlane = new Plane(cutNormal, cutPos);
 
-        // 
+        // Divide verts to left and right side of cutplane
         for (int i = 0; i < triangles.Length / 3; i++)
         {
             // Get triangle face normal
@@ -412,17 +424,18 @@ public class MeshSlicer : MonoBehaviour
         GameObject go = new GameObject("Slice");
         go.transform.position = transform.position;
         go.transform.rotation = transform.rotation;
-        go.transform.localScale = transform.localScale;
+        go.transform.localScale = transform.lossyScale;
+        //go.transform.parent = transform.root;
         go.AddComponent<MeshFilter>().mesh = mesh;
         go.AddComponent<MeshRenderer>().material = cutMaterial;
-        MeshCollider meshCollider = go.AddComponent<MeshCollider>();
-        meshCollider.cookingOptions = MeshColliderCookingOptions.InflateConvexMesh;
-        meshCollider.sharedMesh = mesh;
-        meshCollider.convex = true;
+        MeshCollider m_meshCollider = go.AddComponent<MeshCollider>();
+        m_meshCollider.cookingOptions = MeshColliderCookingOptions.InflateConvexMesh;
+        m_meshCollider.skinWidth = 0.005f;
+        m_meshCollider.sharedMesh = mesh;
+        m_meshCollider.convex = true;
 
         Rigidbody slice_rb = go.AddComponent<Rigidbody>();
         slice_rb.mass = 0.3f;
-        slice_rb.centerOfMass = go.transform.InverseTransformPoint(meshCollider.bounds.center);
         slice_rb.velocity = rb.velocity;
         slice_rb.angularVelocity = rb.angularVelocity;
 
@@ -438,15 +451,16 @@ public class MeshSlicer : MonoBehaviour
 
     void Update()
     {
+
+#if UNITY_EDITOR
+
         if (Input.GetKeyDown(KeyCode.Q))
         {
             Cut(transform.position, new List<Vector3>(new Vector3[] { transform.TransformDirection(1, 0, 0), transform.TransformDirection(0, 1, 0), transform.TransformDirection(0, 0, 1), transform.TransformDirection(0, 1, 1) }));
 
-#if UNITY_EDITOR
-
             UnityEditor.EditorApplication.isPaused = true;
+        }
 #endif
 
-        }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI;
 
 public class Spawner : MonoBehaviour
 {
@@ -12,22 +13,28 @@ public class Spawner : MonoBehaviour
     [SerializeField] Transform[] spawnPoints;
 
     [SerializeField] GameObject enemy;
+    [SerializeField] EnemySettings enemySettings;
 
-    void SpawnCountDown()
+
+    public void Spawn(int idx, float speed)
     {
-        spawnTimeLeft -= Time.deltaTime;
+        GameObject enemyClone = Instantiate(enemy, spawnPoints[idx].position, spawnPoints[idx].rotation, transform.root);
+        enemycount++;
+        SetupEnemy(enemyClone, speed);
 
-        if (spawnTimeLeft < 0)
-        {
-            Spawn(Random.Range(1, spawnPoints.Length));
-            spawnTimeLeft = spawnTimeInterval;
-        }
     }
 
-    public void Spawn(int idx)
+    public void Spawn(float speed)
     {
-        Instantiate(enemy, spawnPoints[idx].position, spawnPoints[idx].rotation, transform.root);
+        int idx = Random.Range(0, spawnPoints.Length);
+        GameObject enemyClone = Instantiate(enemy, spawnPoints[idx].position, spawnPoints[idx].rotation, transform.root);
         enemycount++;
+        SetupEnemy(enemyClone, speed);
+    }
+
+    void SetupEnemy(GameObject go, float speed)
+    {
+        go.GetComponent<NavMeshAgent>().speed = speed;
     }
 
 }

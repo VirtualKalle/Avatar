@@ -211,7 +211,7 @@ public class AvatarMovement : MonoBehaviour
             nav.velocity = move.y * fwd * AvatarGameManager.worldScale * moveSpeed + (-move.x * right * AvatarGameManager.worldScale * moveSpeed);
 
         }
-        else if (OVRInput.Get(OVRInput.RawAxis2D.LThumbstick).magnitude < 0.1f && moveYKey && moveXKey && startedMoving)
+        else if (OVRInput.Get(OVRInput.RawAxis2D.LThumbstick).magnitude < 0.1f && !moveYKey && !moveXKey && startedMoving)
         {
             startedMoving = false;
         }
