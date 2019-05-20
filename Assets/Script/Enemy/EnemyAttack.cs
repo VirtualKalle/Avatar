@@ -10,12 +10,17 @@ public class EnemyAttack : MonoBehaviour
     Animator m_animator;
     float attackTimeLeft;
     float attackTime = 1;
+    AudioSource m_audioSource;
+
+    [SerializeField] GameObject hitParticle;
+    [SerializeField] Transform hitPoint;
 
 
     void Awake()
     {
         avatarHealth = FindObjectOfType<AvatarHealth>();
         m_animator = GetComponent<Animator>();
+        m_audioSource = GetComponent<AudioSource>();
     }
 
     private void OnTriggerEnter(Collider other)
@@ -54,6 +59,12 @@ public class EnemyAttack : MonoBehaviour
             avatarHealth.TakeDamage(10, transform.forward * 10f);
         }
         m_animator.SetBool("attack", false);
+        m_audioSource.pitch = Random.Range(0.8f, 1.2f);
+        m_audioSource.Play();
+        GameObject go = Instantiate(hitParticle);
+        go.transform.position = hitPoint.position;
+        go.transform.localScale = hitPoint.lossyScale;
+        Destroy(go, 1);
     }
 
 

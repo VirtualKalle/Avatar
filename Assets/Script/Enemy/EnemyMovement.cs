@@ -13,14 +13,14 @@ public class EnemyMovement : MonoBehaviour
 
     private void OnEnable()
     {
-        AvatarHealth.deathEvent += Death;
-        enemyHealth.deathEvent += Death;
+        AvatarHealth.deathEvent += Immobilze;
+        enemyHealth.deathEvent += Immobilze;
     }
 
     private void OnDisable()
     {
-        AvatarHealth.deathEvent -= Death;
-        enemyHealth.deathEvent -= Death;
+        AvatarHealth.deathEvent -= Immobilze;
+        enemyHealth.deathEvent -= Immobilze;
     }
 
     void Awake()
@@ -70,11 +70,12 @@ public class EnemyMovement : MonoBehaviour
         }
     }
 
-    void Death()
+    void Immobilze()
     {
         m_animator.SetBool("move", false);
         nav.enabled = false;
         rb.isKinematic = true;
         rb.useGravity = false;
     }
+
 }

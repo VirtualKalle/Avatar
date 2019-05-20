@@ -30,10 +30,10 @@ public class EnemyPhysics : MonoBehaviour
 
     public void DeathPhysics(Vector3 force)
     {
-        foreach (Rigidbody go in bodyParts)
+        foreach (Rigidbody rb in bodyParts)
         {
-            go.GetComponent<Collider>().enabled = true;
-            Rigidbody child_rb = go.GetComponent<Rigidbody>();
+            rb.GetComponentInChildren<Collider>().enabled = true;
+            Rigidbody child_rb = rb.GetComponent<Rigidbody>();
             child_rb.isKinematic = false;
             child_rb.AddForce(force/3, ForceMode.Force);
         }
