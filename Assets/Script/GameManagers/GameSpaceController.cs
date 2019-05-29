@@ -5,13 +5,29 @@ using UnityEngine;
 public class GameSpaceController : MonoBehaviour
 {
     private bool rotated;
-    private float previousTimeScale;
     [SerializeField] Transform rotateAround;
 
 
-    public void Rotate(int degrees)
+    IEnumerator LerpRotate(float degrees)
     {
-        transform.RotateAround(rotateAround.position, new Vector3(0,1,0), degrees);
+
+        rotated = true;
+        AvatarGameManager.Pause();
+
+        float endAngle = transform.eulerAngles.y + degrees;
+        float speed = 2;
+
+        for (int i = 0; i < Mathf.Abs(degrees / speed); i++)
+        {
+            int rotation = endAngle - transform.eulerAngles.y > 0 ? 1 : -1;
+            transform.RotateAround(rotateAround.position, new Vector3(0, 1, 0), rotation * speed);
+            yield return new WaitForSecondsRealtime(0.01f);
+        }
+
+        transform.eulerAngles = new Vector3(0, endAngle, 0);
+        rotated = false;
+        AvatarGameManager.UnPause();
+
     }
 
     void Update()
@@ -19,40 +35,24 @@ public class GameSpaceController : MonoBehaviour
         float horizontal = OVRInput.Get(OVRInput.RawAxis2D.RThumbstick).x;
         float vertical = OVRInput.Get(OVRInput.RawAxis2D.RThumbstick).y;
 
-        if (!rotated && (Mathf.Abs(horizontal) > 0.1f || Mathf.Abs(vertical) > 0.1f))
+        if (!rotated && (Mathf.Abs(horizontal) > 0.5f || Mathf.Abs(vertical) > 0.5f))
         {
 
-            if (horizontal > 0.1f)
+            if (horizontal > 0.5f)
             {
-                Rotate(90);
+                StartCoroutine(LerpRotate(90));
             }
-            else if (horizontal < -0.1f)
+            else if (horizontal < -0.5f)
             {
-                Rotate(-90);
+                StartCoroutine(LerpRotate(-90));
             }
-            else if (vertical < -0.1f)
+            else if (vertical < -0.5f)
             {
-                Rotate(180);
+                StartCoroutine(LerpRotate(180));
             }
-            else if (vertical > 0.1f)
+            else if (vertical > 0.5f)
             {
-                transform.eulerAngles = new Vector3(0, 0, 0);
-            }
-
-            rotated = true;
-            AvatarGameManager.Pause();
+            }   
         }
-        else if (horizontal == 0 && vertical == 0 && rotated)
-        {
-            rotated = false;
-            AvatarGameManager.UnPause();
-        }
-        else if (OVRInput.Get(OVRInput.Button.PrimaryIndexTrigger, OVRInput.Controller.RTouch) && AvatarGameManager.paused)
-        {
-            AvatarGameManager.UnPause();
-        }
-
-
-
     }
 }
