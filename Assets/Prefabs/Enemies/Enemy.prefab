@@ -183,7 +183,7 @@ GameObject:
   - component: {fileID: 114579372605108924}
   - component: {fileID: 82249171148592986}
   m_Layer: 0
-  m_Name: Enemy2
+  m_Name: Enemy
   m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1281,12 +1281,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8ae39370af9582c4a93a5ca6856ec4f4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  isCut: 0
   cutMaterial: {fileID: 2100000, guid: 693960aef8379f0459b69454f53186cd, type: 2}
-  plane: {fileID: 0}
-  Centroid: {fileID: 0}
-  SlicePrefab: {fileID: 1256603988826554, guid: ef1066becc180bd4185ebf25b21dde44,
-    type: 2}
 --- !u!114 &114073701272980574
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1298,12 +1293,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8ae39370af9582c4a93a5ca6856ec4f4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  isCut: 0
   cutMaterial: {fileID: 2100000, guid: 693960aef8379f0459b69454f53186cd, type: 2}
-  plane: {fileID: 0}
-  Centroid: {fileID: 0}
-  SlicePrefab: {fileID: 1256603988826554, guid: ef1066becc180bd4185ebf25b21dde44,
-    type: 2}
 --- !u!114 &114116823570728348
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1315,12 +1305,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8ae39370af9582c4a93a5ca6856ec4f4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  isCut: 0
   cutMaterial: {fileID: 2100000, guid: 693960aef8379f0459b69454f53186cd, type: 2}
-  plane: {fileID: 0}
-  Centroid: {fileID: 0}
-  SlicePrefab: {fileID: 1256603988826554, guid: ef1066becc180bd4185ebf25b21dde44,
-    type: 2}
 --- !u!114 &114127245264991094
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1380,12 +1365,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8ae39370af9582c4a93a5ca6856ec4f4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  isCut: 0
   cutMaterial: {fileID: 2100000, guid: 693960aef8379f0459b69454f53186cd, type: 2}
-  plane: {fileID: 0}
-  Centroid: {fileID: 0}
-  SlicePrefab: {fileID: 1256603988826554, guid: ef1066becc180bd4185ebf25b21dde44,
-    type: 2}
 --- !u!114 &114403367485623660
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1452,12 +1432,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8ae39370af9582c4a93a5ca6856ec4f4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  isCut: 0
   cutMaterial: {fileID: 2100000, guid: 693960aef8379f0459b69454f53186cd, type: 2}
-  plane: {fileID: 0}
-  Centroid: {fileID: 0}
-  SlicePrefab: {fileID: 1256603988826554, guid: ef1066becc180bd4185ebf25b21dde44,
-    type: 2}
 --- !u!114 &114673926405600486
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1469,12 +1444,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8ae39370af9582c4a93a5ca6856ec4f4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  isCut: 0
   cutMaterial: {fileID: 2100000, guid: 693960aef8379f0459b69454f53186cd, type: 2}
-  plane: {fileID: 0}
-  Centroid: {fileID: 0}
-  SlicePrefab: {fileID: 1256603988826554, guid: ef1066becc180bd4185ebf25b21dde44,
-    type: 2}
 --- !u!114 &114748580669803462
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1502,6 +1472,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b18c77cd558e2064ea959c0454b7fa60, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  spawning: 0
   startingHealth: 100
   currentHealth: 0
   healthBar: {fileID: 114939613213686834}

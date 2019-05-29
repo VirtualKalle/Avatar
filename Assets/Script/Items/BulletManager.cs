@@ -8,14 +8,8 @@ public class BulletManager : MonoBehaviour
     [SerializeField] float velocity = 10f;
     private bool neutralized;
     [SerializeField] GameObject hitParticle;
-    TrailRenderer trail;
     [SerializeField] Rigidbody rb;
-
-    private void Awake()
-    {
-        trail = GetComponentInChildren<TrailRenderer>();
-    }
-
+    
     void Start()
     {
         rb.velocity = transform.forward * velocity * AvatarGameManager.worldScale;

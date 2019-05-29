@@ -5,9 +5,6 @@ using UnityEngine.AI;
 
 public class Spawner : MonoBehaviour
 {
-    float spawnTimeLeft = 5;
-    float spawnTimeInterval = 5;
-
     private int enemycount;
 
     [SerializeField] Transform[] spawnPoints;

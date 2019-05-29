@@ -10,7 +10,6 @@ public class Teleport : MonoBehaviour
     [SerializeField] GameObject teleportPointer;
     [SerializeField] LineRenderer m_lineRenderer;
     private bool isPointing;
-    Vector3 fwdDirection;
     Camera m_Camera;
 
     void Start()
@@ -22,11 +21,6 @@ public class Teleport : MonoBehaviour
     void Update()
     {
         PointTeleporter();
-    }
-
-    void GetDirection()
-    {
-        fwdDirection = Vector3.ProjectOnPlane((laserPointer.position - m_Camera.transform.position), new Vector3(0, 1, 0)).normalized;
     }
 
     void Twist()
