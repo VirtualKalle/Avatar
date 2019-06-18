@@ -17,8 +17,8 @@ public class LookAtAnchor : MonoBehaviour
     {
         if (!AvatarGameManager.paused)
         {
-            Vector3 direction = Vector3.ProjectOnPlane(mainCamera.transform.forward, new Vector3(0, 1, 0));
-            transform.eulerAngles = new Vector3(0, -Vector3.SignedAngle(direction, new Vector3(0, 0, 1), new Vector3(0, 1, 0)), 0);
+            Vector3 direction = Vector3.ProjectOnPlane(mainCamera.transform.forward, Vector3.up);
+            transform.eulerAngles = new Vector3(0, -Vector3.SignedAngle(direction, Vector3.forward, Vector3.up), 0);
         }
     }
 

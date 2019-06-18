@@ -20,7 +20,7 @@ public class GameSpaceController : MonoBehaviour
         for (int i = 0; i < Mathf.Abs(degrees / speed); i++)
         {
             int rotation = endAngle - transform.eulerAngles.y > 0 ? 1 : -1;
-            transform.RotateAround(rotateAround.position, new Vector3(0, 1, 0), rotation * speed);
+            transform.RotateAround(rotateAround.position, Vector3.up, rotation * speed);
             yield return new WaitForSecondsRealtime(0.01f);
         }
 

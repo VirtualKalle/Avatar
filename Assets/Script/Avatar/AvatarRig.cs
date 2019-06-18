@@ -44,7 +44,7 @@ public class AvatarRig : MonoBehaviour
         headAvatar.rotation = head.rotation;
         headRig.localRotation = headAvatar.localRotation;
 
-        bodyAvatar.localPosition = headAvatar.localPosition + new Vector3(0, -1f, 0);
+        bodyAvatar.localPosition = headAvatar.localPosition - Vector3.up;
 
         handRightAvatar.position = headAvatar.TransformPoint(head.transform.InverseTransformPoint(handRight.position));
         handRightAvatar.rotation = handRight.rotation;

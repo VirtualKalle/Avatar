@@ -225,8 +225,8 @@ public class AvatarMovement : MonoBehaviour
     void Rotate()
     {
         Camera camera = Camera.main;
-        Vector3 direction = Vector3.ProjectOnPlane(transform.position - camera.transform.position, new Vector3(0, 1, 0));
-        transform.Rotate(new Vector3(0, 1, 0), Vector3.SignedAngle(transform.forward, direction, new Vector3(0, 1, 0)), Space.World);
+        Vector3 direction = Vector3.ProjectOnPlane(transform.position - camera.transform.position, Vector3.up);
+        transform.Rotate(Vector3.up, Vector3.SignedAngle(transform.forward, direction, Vector3.up), Space.World);
     }
 
     void Twist()
